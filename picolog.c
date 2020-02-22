@@ -7,7 +7,7 @@ typedef struct
     pico_appender_t p_appender;
     void* p_user_data;
     int enabled;
-} app_holder_t;
+} app_info_t;
 
 static app_holder_t gp_apps[PICO_LOG_MAX_APPENDERS];
 static void* gp_user_data = NULL;
