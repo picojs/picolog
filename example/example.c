@@ -4,6 +4,5 @@
 
 int main(int argc, char** argv)
 {
-    plog_init();
     return 0;
 }

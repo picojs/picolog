@@ -46,8 +46,8 @@ typedef enum
     PLOG_ERROR_UNKNOWN      = -5 /* This should never happen */
 } plog_error_t;
 
-void
-plog_init();
+const char* 
+plog_error_str(plog_error_t error_id);
 
 void
 plog_enable();
