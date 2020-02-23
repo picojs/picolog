@@ -1,7 +1,7 @@
 #ifndef PICOLOG_H
 #define PICOLOG_H
 
-#include <stddef.h>  /* NULL, size_t */
+#include <stddef.h> /* NULL, size_t */
 
 #ifndef PLOG_MAX_APPENDERS
 #   define PLOG_MAX_APPENDERS 8
@@ -9,7 +9,7 @@
 
 #ifndef PLOG_MAX_MSG_LENGTH
 #   define PLOG_MAX_MSG_LENGTH 1024
-#endif
+#endif /* PLOG_MAX_MSG_LENGTH */
 
 typedef enum
 {
@@ -24,8 +24,7 @@ typedef enum
 typedef enum
 {
     PLOG_ERROR_OK = 0,
-    PLOG_ERROR_OUT_OF_RANGE,
-    PLOG_ERROR_OUT_OF_SPACE,
+    PLOG_ERROR_MAX_APPENDERS,
     PLOG_ERROR_INVALD_ARG,
     PLOG_ERROR_INVALD_ID,
     PLOG_ERROR_UNKNOWN, /* This should never happen */

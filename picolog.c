@@ -1,8 +1,8 @@
 #include "picolog.h"
 
-#include <stdarg.h>
+#include <stdarg.h>  /* va_list, va_start, va_end */
 #include <stdbool.h> /* bool, true, false */
-#include <stdio.h>
+#include <stdio.h>   /* vsnprintf */
 
 static bool   gb_initialized   = false;
 static bool   gb_enabled       = false;
@@ -12,8 +12,7 @@ static size_t g_appender_count = 0;
 const char* const error_strs[] =
 {
     "OK",
-    "Out of range",
-    "Out of space",
+    "Max appenders",
     "Invalid argument",
     "Invalid ID",
     "Unknown",
@@ -47,7 +46,6 @@ try_init ()
     }
 
     gb_initialized = true;
-    gb_enabled = true;
 }
 
 const char*
@@ -84,7 +82,7 @@ plog_set_level (plog_level_t level)
 
     if (level < 0 || level >= PLOG_LEVEL_COUNT)
     {
-        return PLOG_ERROR_OUT_OF_RANGE;
+        return PLOG_ERROR_INVALD_ARG;
     }
 
     g_log_level = level;
@@ -101,7 +99,7 @@ plog_appender_register (plog_appender_t appender,
 
     if (PLOG_MAX_APPENDERS <= g_appender_count)
     {
-        return PLOG_ERROR_OUT_OF_SPACE;
+        return PLOG_ERROR_MAX_APPENDERS;
     }
 
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
@@ -131,7 +129,7 @@ plog_appender_unregister (plog_appender_id_t id)
 
     if (PLOG_ERROR_INVALD_ID <= id)
     {
-        return PLOG_ERROR_OUT_OF_RANGE;
+        return PLOG_ERROR_INVALD_ID;
     }
 
     gp_appenders[id].p_appender = NULL;
@@ -184,7 +182,15 @@ plog_appender_disable (plog_appender_id_t id)
 plog_error_t
 plog_write (plog_level_t level, const char* p_fmt, ...)
 {
-    try_init();
+    if (!gb_enabled)
+    {
+        return PLOG_ERROR_OK;
+    }
+
+    if (PLOG_LEVEL_COUNT <= level)
+    {
+        return PLOG_ERROR_INVALD_ARG;
+    }
 
     if (g_log_level <= level)
     {
@@ -197,7 +203,7 @@ plog_write (plog_level_t level, const char* p_fmt, ...)
 
         for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
         {
-            if (NULL != gp_appenders[i].p_appender)
+            if (NULL != gp_appenders[i].p_appender && gp_appenders[i].b_enabled)
             {
                 gp_appenders[i].p_appender(p_msg, gp_appenders[i].p_user_data);
             }
