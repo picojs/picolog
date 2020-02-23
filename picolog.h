@@ -18,6 +18,17 @@ typedef enum
     PLOG_LEVEL_COUNT
 } plog_level_t;
 
+typedef enum
+{
+    PLOG_ERROR_OK = 0,
+    PLOG_ERROR_OUT_OF_RANGE,
+    PLOG_ERROR_OUT_OF_SPACE,
+    PLOG_ERROR_INVALD_ARG,
+    PLOG_ERROR_INVALD_ID,
+    PLOG_ERROR_UNKNOWN, /* This should never happen */
+    PLOG_ERROR_COUNT,
+} plog_error_t;
+
 #define PLOG_DEBUG(FMT, ...) \
         plog_write(PLOG_LEVEL_DEBUG, FMT, ##__VAR_ARGS__)
 
@@ -33,21 +44,11 @@ typedef enum
 #define PLOG_FATAL(FMT, ...) \
         plog_write(PLOG_LEVEL_FATAL, FMT, ##__VAR_ARGS__)
 
-typedef int (*plog_appender_t)(const char* p_msg, void* p_user_data);
+typedef int  (*plog_appender_t)(const char* p_msg, void* p_user_data);
 typedef size_t plog_appender_id_t;
 
-typedef enum
-{
-    PLOG_ERROR_OK           =  0,
-    PLOG_ERROR_OUT_OF_RANGE = -1,
-    PLOG_ERROR_OUT_OF_SPACE = -2,
-    PLOG_ERROR_INVALD_ARG   = -3,
-    PLOG_ERROR_INVALD_ID    = -4,
-    PLOG_ERROR_UNKNOWN      = -5 /* This should never happen */
-} plog_error_t;
-
-const char* 
-plog_error_str(plog_error_t error_id);
+const char*
+plog_error_str(plog_error_t error_code);
 
 void
 plog_enable();
@@ -60,7 +61,7 @@ plog_set_level(plog_level_t level);
 
 plog_error_t
 plog_appender_register(plog_appender_t appender,
-                       void* p_user_data, 
+                       void* p_user_data,
                        plog_appender_id_t* id);
 
 plog_error_t

@@ -1,5 +1,21 @@
 #include "picolog.h"
 
+static bool   gb_initialized   = false;
+static bool   gb_enabled       = false;
+static int    g_log_level      = PLOG_LEVEL_DEBUG;
+static size_t g_appender_count = 0;
+
+const char* const error_strs[] = 
+{ 
+    "OK", 
+    "Out of range",
+    "Out of space",
+    "Invalid argument",
+    "Invalid ID",
+    "Unknown",
+     0 
+};
+
 typedef struct
 {
     plog_appender_t p_appender;
@@ -9,11 +25,6 @@ typedef struct
 
 
 static appender_info_t gp_appenders[PLOG_MAX_APPENDERS];
-
-static bool   gb_initialized = false;
-static bool   gb_enabled = false;
-static int    g_log_level  = PLOG_LEVEL_DEBUG;
-static size_t g_appender_count = 0;
 
 static void
 try_init ()
@@ -34,6 +45,19 @@ try_init ()
    
     gb_initialized = true;
     gb_enabled = true;
+}
+
+const char*
+plog_error_str(plog_error_t error_code)
+{
+    if (error_code < 0 || error_code >= PLOG_ERROR_COUNT)
+    {
+        return error_strs[(size_t)error_code];
+    }
+    else
+    {
+        return error_strs[(size_t)PLOG_ERROR_UNKNOWN];
+    }
 }
 
 void
