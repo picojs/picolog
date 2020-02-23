@@ -114,7 +114,12 @@ plog_appender_unregister (plog_appender_id_t id)
 {
     try_init();
 
-    if (PLOG_ERROR_INVALD_ID <= id)
+    if (PLOG_MAX_APPENDERS <= id)
+    {
+        return PLOG_ERROR_INVALD_ID;
+    }
+
+    if (NULL ==  gp_appenders[id].p_appender)
     {
         return PLOG_ERROR_INVALD_ID;
     }
@@ -185,7 +190,7 @@ plog_write (plog_level_t level, const char* p_fmt, ...)
 {
     if (!gb_enabled)
     {
-        return PLOG_ERROFR_NOT_ENABLED;
+        return PLOG_ERROR_NOT_ENABLED;
     }
 
     if (PLOG_LEVEL_COUNT <= level)
