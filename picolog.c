@@ -12,9 +12,10 @@ static size_t g_appender_count = 0;
 const char* const error_strs[] =
 {
     "OK",
-    "Max appenders",
+    "Max appenders reached",
     "Invalid argument",
     "Invalid ID",
+    "Logger not enabled",
     "Unknown",
      0
 };
@@ -59,20 +60,6 @@ plog_error_str(plog_error_t error_code)
     {
         return error_strs[(size_t)PLOG_ERROR_UNKNOWN];
     }
-}
-
-void
-plog_enable()
-{
-    try_init();
-    gb_enabled = true;
-}
-
-void
-plog_disable()
-{
-    try_init();
-    gb_enabled = true;
 }
 
 plog_error_t
@@ -179,12 +166,26 @@ plog_appender_disable (plog_appender_id_t id)
     return PLOG_ERROR_OK;
 }
 
+void
+plog_enable()
+{
+    try_init();
+    gb_enabled = true;
+}
+
+void
+plog_disable()
+{
+    try_init();
+    gb_enabled = false;
+}
+
 plog_error_t
 plog_write (plog_level_t level, const char* p_fmt, ...)
 {
     if (!gb_enabled)
     {
-        return PLOG_ERROR_OK;
+        return PLOG_ERROFR_NOT_ENABLED;
     }
 
     if (PLOG_LEVEL_COUNT <= level)
