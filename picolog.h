@@ -1,12 +1,15 @@
 #ifndef PICOLOG_H
 #define PICOLOG_H
 
-#include <stdbool.h> /* bool, true, false */
 #include <stddef.h>  /* NULL, size_t */
 
 #ifndef PLOG_MAX_APPENDERS
 #   define PLOG_MAX_APPENDERS 8
 #endif /* PLOG_MAX_APPENDERS */
+
+#ifndef PLOG_MAX_MSG_LENGTH
+#   define PLOG_MAX_MSG_LENGTH 1024
+#endif
 
 typedef enum
 {

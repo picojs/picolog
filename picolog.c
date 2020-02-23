@@ -1,5 +1,9 @@
 #include "picolog.h"
 
+#include <stdarg.h>
+#include <stdbool.h> /* bool, true, false */
+#include <stdio.h>
+
 static bool   gb_initialized   = false;
 static bool   gb_enabled       = false;
 static int    g_log_level      = PLOG_LEVEL_DEBUG;
@@ -44,16 +48,6 @@ try_init ()
 
     gb_initialized = true;
     gb_enabled = true;
-}
-
-void plog_enable ()
-{
-    gb_enabled = true;
-}
-
-void plog_disable ()
-{
-    gb_enabled = false;
 }
 
 const char*
@@ -194,7 +188,20 @@ plog_write (plog_level_t level, const char* p_fmt, ...)
 
     if (g_log_level <= level)
     {
-        // Write to log
+        char p_msg[PLOG_MAX_MSG_LENGTH];
+
+        va_list args;
+        va_start(args, p_fmt);
+        vsnprintf(p_msg, sizeof(p_msg), p_fmt, args);
+        va_end(args);
+
+        for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
+        {
+            if (NULL != gp_appenders[i].p_appender)
+            {
+                gp_appenders[i].p_appender(p_msg, gp_appenders[i].p_user_data);
+            }
+        }
     }
 
     return PLOG_ERROR_OK;
