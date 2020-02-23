@@ -5,7 +5,7 @@
 #include <stddef.h>  /* NULL, size_t */
 
 #ifndef PLOG_MAX_APPENDERS
-#   define PLOG_MAX_APPENDERS 16
+#   define PLOG_MAX_APPENDERS 8
 #endif /* PLOG_MAX_APPENDERS */
 
 typedef enum
@@ -50,31 +50,23 @@ typedef size_t plog_appender_id_t;
 const char*
 plog_error_str(plog_error_t error_code);
 
-void
-plog_enable();
+void plog_enable();
 
-void
-plog_disable();
+void plog_disable();
 
-plog_error_t
-plog_set_level(plog_level_t level);
+plog_error_t plog_set_level(plog_level_t level);
 
-plog_error_t
-plog_appender_register(plog_appender_t appender,
-                       void* p_user_data,
-                       plog_appender_id_t* id);
+plog_error_t plog_appender_register(plog_appender_t appender,
+                                    void* p_user_data,
+                                    plog_appender_id_t* id);
 
-plog_error_t
-plog_appender_unregister(plog_appender_id_t id);
+plog_error_t plog_appender_unregister(plog_appender_id_t id);
 
-plog_error_t
-plog_appender_enable(plog_appender_id_t id);
+plog_error_t plog_appender_enable(plog_appender_id_t id);
 
-plog_error_t
-plog_appender_disable(plog_appender_id_t id);
+plog_error_t plog_appender_disable(plog_appender_id_t id);
 
-plog_error_t
-plog_write(plog_level_t level, const char* p_fmt, ...);
+plog_error_t plog_write(plog_level_t level, const char* p_fmt, ...);
 
 #endif /* PICOLOG_H */
 
