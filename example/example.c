@@ -4,6 +4,6 @@
 
 int main(int argc, char** argv)
 {
-    picolog_init();
+    plog_init();
     return 0;
 }

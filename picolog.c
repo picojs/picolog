@@ -2,22 +2,21 @@
 
 typedef struct
 {
-    picolog_appender_t p_appender;
+    plog_appender_t p_appender;
     void*              p_user_data;
     bool               b_enabled;
 } appender_info_t;
 
-static appender_info_t gp_appenders[PICOLOG_MAX_APPENDERS];
+static int g_log_level  = PLOG_LEVEL_DEBUG;
 
-static void*  gp_user_data = NULL;
+static appender_info_t gp_appenders[PLOG_MAX_APPENDERS];
 static size_t g_appender_count = 0;
-static int    g_log_level  = PICOLOG_LEVEL_DEBUG;
 
-void picolog_init()
+void plog_init()
 {
-    g_log_level = PICOLOG_LEVEL_DEBUG;
+    g_log_level = PLOG_LEVEL_DEBUG;
 
-    for (int i = 0; i < PICOLOG_MAX_APPENDERS; i++)
+    for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
         gp_appenders[i].p_appender  = NULL;
         gp_appenders[i].p_user_data = NULL;
@@ -25,76 +24,57 @@ void picolog_init()
     }
 }
 
-picolog_error_t
-picolog_set_level(picolog_level_t level)
+plog_error_t
+plog_set_level(plog_level_t level)
 {
-    if (level < 0 || level >= PICOLOG_LEVEL_COUNT)
+    if (level < 0 || level >= PLOG_LEVEL_COUNT)
     {
-        return PICOLOG_ERROR_OUT_OF_RANGE;
+        return PLOG_ERROR_OUT_OF_RANGE;
     }
-    
+
     g_log_level = level;
 
-    return PICOLOG_ERROR_OK;
+    return PLOG_ERROR_OK;
 }
 
-void
-picolog_set_user_data(void* p_user_data)
+plog_error_t
+plog_appender_register(plog_appender_t appender, 
+                       void* user_data, 
+                       plog_appender_id_t* id)
 {
-    gp_user_data = p_user_data;
-}   
-
-void*
-picolog_get_user_data()
-{
-    return gp_user_data;
-}
-
-picolog_error_t
-picolog_appender_register(picolog_appender_t appender, picolog_appender_id_t* id)
-{
-    if (g_appender_count + 1 > PICOLOG_MAX_APPENDERS)
+    if (g_appender_count + 1 > PLOG_MAX_APPENDERS)
     {
-        return PICOLOG_ERROR_OUT_OF_SPACE;
+        return PLOG_ERROR_OUT_OF_SPACE;
     }
 
-    for (int i = 0; i < PICOLOG_MAX_APPENDERS; i++)
+    for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
         if (NULL == gp_appenders[i].p_appender)
         {
             gp_appenders[i].p_appender = appender;
-            
+
             if (NULL != id)
             {
                 *id = i;
-            }           
-            
+            }
+
             g_appender_count++;
-            
-            return PICOLOG_ERROR_OK;
+
+            return PLOG_ERROR_OK;
         }
-    }    
-    
-    return PICOLOG_ERROR_UNKNOWN;
+    }
+
+    return PLOG_ERROR_UNKNOWN;
 }
 
-picolog_error_t
-picolog_appender_unregister(picolog_appender_id_t id);
+plog_error_t
+plog_appender_unregister(plog_appender_id_t id);
 
-picolog_error_t
-picolog_appender_set_user_data(picolog_appender_id_t id, void* p_user_data);
+plog_error_t
+plog_appender_enable(plog_appender_id_t id);
 
-picolog_error_t
-picolog_appender_get_user_data(picolog_appender_id_t id, void** pp_user_data);
+plog_error_t
+plog_appender_disable(plog_appender_id_t id);
 
-picolog_error_t
-picolog_appender_is_enabled(picolog_appender_id_t id);
-
-picolog_error_t
-picolog_appender_enable(picolog_appender_id_t id);
-
-picolog_error_t
-picolog_appender_disable(picolog_appender_id_t id);
-
-picolog_error_t
-picolog_write(picolog_level_t level, const char* p_fmt, ...);
+plog_error_t
+plog_write(plog_level_t level, const char* p_fmt, ...);
