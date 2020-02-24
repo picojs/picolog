@@ -212,10 +212,10 @@ plog_disable()
 }
 
 static void
-get_time_str(char* str)
+get_time_str(char* p_str, size_t length)
 {
     time_t now = time(0);
-    strftime(str, sizeof(str), "%d/%m/%g %H:%M:%S", localtime(&now));
+    strftime(p_str, length, "%d/%m/%g %H:%M:%S", localtime(&now));
 }
 
 plog_error_t
@@ -249,7 +249,7 @@ plog_write (plog_level_t level, const char* p_fmt, ...)
         else
         {
             char p_time_str[32];
-            get_time_str(p_time_str);
+            get_time_str(p_time_str, sizeof(p_time_str));
             snprintf(p_msg, sizeof(p_msg), "[%s][%s] %s", p_time_str, level_str_p[level], p_tmp_msg);
         }
 
