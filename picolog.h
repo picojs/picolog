@@ -35,22 +35,22 @@ typedef enum
 } plog_level_t;
 
 #define PLOG_TRACE(...) \
-        plog_write(PLOG_LEVEL_TRACE, __VA_ARGS__)
+        plog_write(PLOG_LEVEL_TRACE, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 #define PLOG_DEBUG(...) \
-        plog_write(PLOG_LEVEL_DEBUG, __VA_ARGS__)
+        plog_write(PLOG_LEVEL_DEBUG, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 #define PLOG_INFO(...) \
-        plog_write(PLOG_LEVEL_INFO,  __VA_ARGS__)
+        plog_write(PLOG_LEVEL_INFO,  __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 #define PLOG_WARN(...) \
-        plog_write(PLOG_LEVEL_WARN,  __VA_ARGS__)
+        plog_write(PLOG_LEVEL_WARN,  __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 #define PLOG_ERROR(...) \
-        plog_write(PLOG_LEVEL_ERROR, __VA_ARGS__)
+        plog_write(PLOG_LEVEL_ERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 #define PLOG_FATAL(...) \
-        plog_write(PLOG_LEVEL_FATAL, __VA_ARGS__)
+        plog_write(PLOG_LEVEL_FATAL, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 typedef int   (*plog_appender_t)(const char* p_msg, void* p_user_data);
 typedef size_t  plog_appender_id_t;
@@ -61,9 +61,9 @@ plog_error_str(plog_error_t error_code);
 
 plog_error_t plog_set_level(plog_level_t level);
 
-void plog_timestamps_on();
+void plog_timestamp_on();
 
-void plog_timestamps_off();
+void plog_timestamp_off();
 
 plog_error_t plog_appender_register(plog_appender_t appender,
                                     void* p_user_data,
@@ -79,7 +79,12 @@ void plog_enable();
 
 void plog_disable();
 
-plog_error_t plog_write(plog_level_t level, const char* p_fmt, ...);
+plog_error_t plog_write (plog_level_t level,
+                         const char* file,
+                         unsigned line,
+                         const char* func,
+                         const char* p_fmt, ...);
+
 
 #endif /* PICOLOG_H */
 

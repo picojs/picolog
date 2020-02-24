@@ -3,12 +3,29 @@
 #include <stdarg.h>  /* va_list, va_start, va_end */
 #include <stdbool.h> /* bool, true, false */
 #include <stdio.h>   /* vsnprintf */
+#include <string.h>
 #include <time.h>
 
-static bool   gb_initialized   = false;
-static bool   gb_enabled       = false;
-static bool   gb_timestamps    = false;
-static int    g_log_level      = PLOG_LEVEL_DEBUG;
+const size_t g_timestamp_len = 32;
+const size_t g_level_len     = 16;
+const size_t g_file_len      = 64;
+const size_t g_func_len      = 32;
+const size_t g_msg_len       = 512;
+
+const size_t g_entry_len     = g_timestamp_len +
+                               g_level_len     +
+                               g_file_len      +
+                               g_func_len      +
+                               g_msg_len;
+
+
+static bool         gb_initialized   = false;
+static bool         gb_enabled       = false;
+static bool         gb_timestamp    = false;
+static plog_level_t g_log_level      = PLOG_LEVEL_DEBUG;
+static bool         gb_file          = false;
+static bool         gb_func          = false;
+
 static size_t g_appender_count = 0;
 
 const char* const error_str_p[] =
@@ -22,7 +39,7 @@ const char* const error_str_p[] =
      0
 };
 
-const char* const level_str_p[] =
+const char* const level_str[] =
 {
     "TRACE",
     "DEBUG",
@@ -91,15 +108,15 @@ plog_set_level (plog_level_t level)
 }
 
 void
-plog_timestamps_on ()
+plog_timestamp_on ()
 {
-    gb_timestamps = true;
+    gb_timestamp = true;
 }
 
 void
-plog_timestamps_off ()
+plog_timestamp_off ()
 {
-    gb_timestamps = true;
+    gb_timestamp = true;
 }
 
 plog_error_t
@@ -211,15 +228,16 @@ plog_disable()
     gb_enabled = false;
 }
 
-static void
-get_time_str(char* p_str, size_t length)
+static char*
+time_str(char* p_str, size_t len)
 {
     time_t now = time(0);
-    strftime(p_str, length, "%d/%m/%g %H:%M:%S", localtime(&now));
+    strftime(p_str, len, "%d/%m/%g %H:%M:%S", localtime(&now));
+    return p_str;
 }
 
 plog_error_t
-plog_write (plog_level_t level, const char* p_fmt, ...)
+plog_write (plog_level_t level, const char* file, unsigned line, const char* func, const char* p_fmt, ...)
 {
     if (!gb_enabled)
     {
@@ -231,34 +249,57 @@ plog_write (plog_level_t level, const char* p_fmt, ...)
         return PLOG_ERROR_INVALD_ARG;
     }
 
-    if (g_log_level <= level)
+    if (g_log_level > level)
     {
-        char p_tmp_msg[PLOG_MAX_MSG_LENGTH];
-        char p_msg[PLOG_MAX_MSG_LENGTH + 64];
+        return PLOG_ERROR_OK;
+    }
 
-        // apply formatting
-        va_list args;
-        va_start(args, p_fmt);
-        vsnprintf(p_tmp_msg, sizeof(p_tmp_msg), p_fmt, args);
-        va_end(args);
+    char p_entry_str[g_entry_len + 1];
+    p_entry_str[0] = '\0';
 
-        if (!gb_timestamps)
-        {
-            snprintf(p_msg, sizeof(p_msg), "[%s] %s", level_str_p[level], p_tmp_msg);
-        }
-        else
-        {
-            char p_time_str[32];
-            get_time_str(p_time_str, sizeof(p_time_str));
-            snprintf(p_msg, sizeof(p_msg), "[%s][%s] %s", p_time_str, level_str_p[level], p_tmp_msg);
-        }
+    if (gb_timestamp)
+    {
+        char p_time_str[g_timestamp_len];
+        char p_tmp_str[g_timestamp_len];
 
-        for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
+        //time_str(p_time_str, sizeof(p_time_str));
+        //snprintf(p_time_str, sizeof(p_time_str), "[%s] ", p_time_str);
+        snprintf(p_time_str, sizeof(p_time_str), "[%s] ", time_str(p_tmp_str, sizeof(p_tmp_str)));
+        strncat(p_entry_str, p_time_str, sizeof(p_entry_str));
+    }
+
+    char p_level_str[g_level_len];
+    snprintf(p_level_str, sizeof(p_level_str), "[%s] ", level_str[level]);
+    strncat(p_entry_str, p_level_str, sizeof(p_entry_str));
+
+    if (gb_file)
+    {
+        char p_file_str[g_file_len];
+        snprintf(p_file_str, sizeof(p_file_str), "[%s:%u] ", file, line);
+        strncat(p_entry_str, p_file_str, sizeof(p_entry_str));
+    }
+
+    if (gb_func)
+    {
+        char p_func_str[g_func_len];
+        snprintf(p_func_str, sizeof(p_func_str), "[%s] ", func);
+        strncat(p_entry_str, p_func_str, sizeof(p_entry_str));
+    }
+
+    char p_msg_str[g_msg_len];
+
+    va_list args;
+    va_start(args, p_fmt);
+    vsnprintf(p_msg_str, sizeof(p_msg_str), p_fmt, args);
+    va_end(args);
+
+    strncat(p_entry_str, p_msg_str, sizeof(p_entry_str));
+
+    for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
+    {
+        if (NULL != gp_appenders[i].p_appender && gp_appenders[i].b_enabled)
         {
-            if (NULL != gp_appenders[i].p_appender && gp_appenders[i].b_enabled)
-            {
-                gp_appenders[i].p_appender(p_msg, gp_appenders[i].p_user_data);
-            }
+                gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data);
         }
     }
 

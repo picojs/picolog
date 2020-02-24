@@ -20,7 +20,7 @@ int main(int argc, char** argv)
     plog_appender_register(appender2, NULL, NULL);
 
     plog_enable();
-    plog_timestamps_on();
+    plog_timestamp_on();
 
     PLOG_INFO("test %d", 10);
 
