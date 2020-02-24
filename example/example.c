@@ -13,7 +13,7 @@ int main(int argc, char** argv)
     plog_appender_register(appender1, NULL, NULL);
     plog_enable();
 
-    PLOG_INFO("test", NULL);
+    PLOG_INFO("test %d", 10);
 
     return 0;
 }
