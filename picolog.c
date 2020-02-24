@@ -94,6 +94,7 @@ plog_appender_register (plog_appender_t appender,
         if (NULL == gp_appenders[i].p_appender)
         {
             gp_appenders[i].p_appender = appender;
+            gp_appenders[i].b_enabled = true;
 
             if (NULL != id)
             {
@@ -206,6 +207,8 @@ plog_write (plog_level_t level, const char* p_fmt, ...)
         va_start(args, p_fmt);
         vsnprintf(p_msg, sizeof(p_msg), p_fmt, args);
         va_end(args);
+
+        // TODO: Time and tag
 
         for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
         {

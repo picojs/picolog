@@ -1,6 +1,7 @@
 #ifndef PICOLOG_H
 #define PICOLOG_H
 
+#include <stdarg.h>
 #include <stddef.h> /* NULL, size_t */
 
 #ifndef PLOG_MAX_APPENDERS
@@ -33,19 +34,19 @@ typedef enum
 } plog_error_t;
 
 #define PLOG_DEBUG(FMT, ...) \
-        plog_write(PLOG_LEVEL_DEBUG, FMT, ##__VAR_ARGS__)
+        plog_write(PLOG_LEVEL_DEBUG, FMT, __VA_ARGS__)
 
-#define PLOG_INFO (FMT, ...) \
-        plog_write(PLOG_LEVEL_INFO,  FMT, ##__VAR_ARGS__)
+#define PLOG_INFO(FMT, ...) \
+        plog_write(PLOG_LEVEL_INFO, FMT, __VA_ARGS__)
 
-#define PLOG_WARN (FMT, ...) \
-         plog_write(PLOG_LEVEL_WARN,  FMT, ##__VAR_ARGS__)
+#define PLOG_WARN(FMT, ...) \
+         plog_write(PLOG_LEVEL_WARN,  FMT, __VA_ARGS__)
 
 #define PLOG_ERROR(FMT, ...) \
-        plog_write(PLOG_LEVEL_ERROR, FMT, ##__VAR_ARGS__)
+        plog_write(PLOG_LEVEL_ERROR, FMT, __VA_ARGS__)
 
 #define PLOG_FATAL(FMT, ...) \
-        plog_write(PLOG_LEVEL_FATAL, FMT, ##__VAR_ARGS__)
+        plog_write(PLOG_LEVEL_FATAL, FMT, __VA_ARGS__)
 
 typedef int   (*plog_appender_t)(const char* p_msg, void* p_user_data);
 typedef size_t  plog_appender_id_t;
