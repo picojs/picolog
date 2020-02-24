@@ -14,16 +14,6 @@
 
 typedef enum
 {
-    PLOG_LEVEL_DEBUG = 0,
-    PLOG_LEVEL_INFO,
-    PLOG_LEVEL_WARN,
-    PLOG_LEVEL_ERROR,
-    PLOG_LEVEL_FATAL,
-    PLOG_LEVEL_COUNT
-} plog_level_t;
-
-typedef enum
-{
     PLOG_ERROR_OK = 0,
     PLOG_ERROR_MAX_APPENDERS,
     PLOG_ERROR_INVALD_ARG,
@@ -32,6 +22,20 @@ typedef enum
     PLOG_ERROR_UNKNOWN, /* This should never happen */
     PLOG_ERROR_COUNT,
 } plog_error_t;
+
+typedef enum
+{
+    PLOG_LEVEL_TRACE = 0,
+    PLOG_LEVEL_DEBUG,
+    PLOG_LEVEL_INFO,
+    PLOG_LEVEL_WARN,
+    PLOG_LEVEL_ERROR,
+    PLOG_LEVEL_FATAL,
+    PLOG_LEVEL_COUNT
+} plog_level_t;
+
+#define PLOG_TRACE(...) \
+        plog_write(PLOG_LEVEL_TRACE, __VA_ARGS__)
 
 #define PLOG_DEBUG(...) \
         plog_write(PLOG_LEVEL_DEBUG, __VA_ARGS__)
@@ -56,6 +60,10 @@ plog_error_str(plog_error_t error_code);
 
 
 plog_error_t plog_set_level(plog_level_t level);
+
+void plog_timestamps_on();
+
+void plog_timestamps_off();
 
 plog_error_t plog_appender_register(plog_appender_t appender,
                                     void* p_user_data,

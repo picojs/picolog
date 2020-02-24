@@ -3,13 +3,15 @@
 #include <stdarg.h>  /* va_list, va_start, va_end */
 #include <stdbool.h> /* bool, true, false */
 #include <stdio.h>   /* vsnprintf */
+#include <time.h>
 
 static bool   gb_initialized   = false;
 static bool   gb_enabled       = false;
+static bool   gb_timestamps    = false;
 static int    g_log_level      = PLOG_LEVEL_DEBUG;
 static size_t g_appender_count = 0;
 
-const char* const error_strs[] =
+const char* const error_str_p[] =
 {
     "OK",
     "Max appenders reached",
@@ -18,6 +20,17 @@ const char* const error_strs[] =
     "Logger not enabled",
     "Unknown",
      0
+};
+
+const char* const level_str_p[] =
+{
+    "TRACE",
+    "DEBUG",
+    "INFO",
+    "WARN",
+    "ERROR",
+    "FATAL",
+    0
 };
 
 typedef struct
@@ -54,11 +67,11 @@ plog_error_str(plog_error_t error_code)
 {
     if (error_code < 0 || error_code >= PLOG_ERROR_COUNT)
     {
-        return error_strs[(size_t)error_code];
+        return error_str_p[(size_t)error_code];
     }
     else
     {
-        return error_strs[(size_t)PLOG_ERROR_UNKNOWN];
+        return error_str_p[(size_t)PLOG_ERROR_UNKNOWN];
     }
 }
 
@@ -75,6 +88,18 @@ plog_set_level (plog_level_t level)
     g_log_level = level;
 
     return PLOG_ERROR_OK;
+}
+
+void
+plog_timestamps_on ()
+{
+    gb_timestamps = true;
+}
+
+void
+plog_timestamps_off ()
+{
+    gb_timestamps = true;
 }
 
 plog_error_t
@@ -186,6 +211,13 @@ plog_disable()
     gb_enabled = false;
 }
 
+static void
+get_time_str(char* str)
+{
+    time_t now = time(0);
+    strftime(str, sizeof(str), "%d/%m/%g %H:%M:%S", localtime(&now));
+}
+
 plog_error_t
 plog_write (plog_level_t level, const char* p_fmt, ...)
 {
@@ -201,14 +233,25 @@ plog_write (plog_level_t level, const char* p_fmt, ...)
 
     if (g_log_level <= level)
     {
-        char p_msg[PLOG_MAX_MSG_LENGTH];
+        char p_tmp_msg[PLOG_MAX_MSG_LENGTH];
+        char p_msg[PLOG_MAX_MSG_LENGTH + 64];
 
+        // apply formatting
         va_list args;
         va_start(args, p_fmt);
-        vsnprintf(p_msg, sizeof(p_msg), p_fmt, args);
+        vsnprintf(p_tmp_msg, sizeof(p_tmp_msg), p_fmt, args);
         va_end(args);
 
-        // TODO: Time and tag
+        if (!gb_timestamps)
+        {
+            snprintf(p_msg, sizeof(p_msg), "[%s] %s", level_str_p[level], p_tmp_msg);
+        }
+        else
+        {
+            char p_time_str[32];
+            get_time_str(p_time_str);
+            snprintf(p_msg, sizeof(p_msg), "[%s][%s] %s", p_time_str, level_str_p[level], p_tmp_msg);
+        }
 
         for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
         {
