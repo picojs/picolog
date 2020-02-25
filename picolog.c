@@ -32,7 +32,6 @@ const char* const error_str_p[] =
     "Max appenders reached",
     "Invalid argument",
     "Invalid ID",
-    "Logger not initialized",
     "Appender failed",
     "Unknown",
      0
@@ -258,12 +257,7 @@ time_str(char* p_str, size_t len)
 plog_error_t
 plog_write (plog_level_t level, const char* file, unsigned line, const char* func, const char* p_fmt, ...)
 {
-    if (!gb_initialized)
-    {
-        return PLOG_ERROR_NOT_INITIALIZED;
-    }
-
-    if (!gb_enabled)
+    if (0 == g_appender_count || !gb_enabled)
     {
         return PLOG_ERROR_OK;
     }
