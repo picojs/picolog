@@ -182,7 +182,7 @@ plog_appender_unregister (plog_appender_id_t id)
         return PLOG_ERROR_INVALD_ID;
     }
 
-    if (NULL ==  gp_appenders[id].p_appender)
+    if (NULL == gp_appenders[id].p_appender)
     {
         return PLOG_ERROR_INVALD_ID;
     }
@@ -190,6 +190,8 @@ plog_appender_unregister (plog_appender_id_t id)
     gp_appenders[id].p_appender = NULL;
     gp_appenders[id].p_user_data = NULL;
     gp_appenders[id].b_enabled = false;
+
+    g_appender_count--;
 
     return PLOG_ERROR_OK;
 }
