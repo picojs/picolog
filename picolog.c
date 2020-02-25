@@ -18,7 +18,7 @@ const size_t g_entry_len     = g_timestamp_len +
 
 
 static bool         gb_initialized   = false;
-static bool         gb_enabled       = false;
+static bool         gb_enabled       = true;
 static bool         gb_timestamp     = false;
 static plog_level_t g_log_level      = PLOG_LEVEL_DEBUG;
 static bool         gb_file          = false;

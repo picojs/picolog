@@ -87,11 +87,11 @@ void plog_enable();
 
 void plog_disable();
 
-plog_error_t plog_write (plog_level_t level,
-                         const char* file,
-                         unsigned line,
-                         const char* func,
-                         const char* p_fmt, ...);
+plog_error_t plog_write(plog_level_t level,
+                        const char* file,
+                        unsigned line,
+                        const char* func,
+                        const char* p_fmt, ...);
 
 
 #endif /* PICOLOG_H */

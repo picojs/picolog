@@ -14,17 +14,59 @@ bool appender2(const char* p_msg, void* p_user_data)
     return true;
 }
 
+void log_all()
+{
+    PLOG_TRACE ("Test %d", 10);
+    PLOG_DEBUG ("Test %d", 10);
+    PLOG_INFO  ("Test %d", 10);
+    PLOG_WARN  ("Test %d", 10);
+    PLOG_ERROR ("Test %d", 10);
+    PLOG_FATAL ("Test %d", 10);
+}
+
 int main(int argc, char** argv)
 {
-    plog_appender_register(appender1, NULL, NULL);
-    plog_appender_register(appender2, NULL, NULL);
+    plog_appender_id_t id1, id2;
 
-    plog_enable();
+    plog_appender_register(appender1, NULL, &id1);
+    plog_appender_register(appender2, NULL, &id2);
+
+
+    plog_set_level(PLOG_LEVEL_TRACE);
+
+    printf("================== Both appenders ==================\n");
+
+    log_all();
+
+    printf("================== One appender ==================\n");
+
+    plog_appender_disable(id2);
+    log_all();
+
+    printf("================== Level (INFO) ==================\n");
+
+    plog_set_level(PLOG_LEVEL_INFO);
+    log_all();
+
+    printf("================== Timestamp ==================\n");
+
     plog_timestamp_on();
-    plog_file_on();
-    plog_func_on();
+    log_all();
 
-    PLOG_INFO("test %d", 10);
+    printf("================== File ==================\n");
+
+
+    plog_file_on();
+    log_all();
+
+    printf("================== Func ==================\n");
+
+
+    plog_func_on();
+    log_all();
+
+
+
 
     return 0;
 }
