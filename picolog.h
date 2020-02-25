@@ -19,7 +19,7 @@ typedef enum
     PLOG_ERROR_MAX_APPENDERS,
     PLOG_ERROR_INVALD_ARG,
     PLOG_ERROR_INVALD_ID,
-    PLOG_ERROR_NOT_ENABLED,
+    PLOG_ERROR_NOT_INITIALIZED,
     PLOG_ERROR_APPENDER_FAILED,
     PLOG_ERROR_UNKNOWN, /* This should never happen */
     PLOG_ERROR_COUNT,
@@ -59,7 +59,6 @@ typedef size_t   plog_appender_id_t;
 
 const char*
 plog_error_str(plog_error_t error_code);
-
 
 plog_error_t plog_set_level(plog_level_t level);
 
