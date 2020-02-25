@@ -2,16 +2,16 @@
 
 #include "../picolog.h"
 
-int appender1(const char* p_msg, void* p_user_data)
+bool appender1(const char* p_msg, void* p_user_data)
 {
     printf("Appender 1: %s\n", p_msg);
-    return 0;
+    return true;
 }
 
-int appender2(const char* p_msg, void* p_user_data)
+bool appender2(const char* p_msg, void* p_user_data)
 {
     printf("Appender 2: %s\n", p_msg);
-    return 0;
+    return true;
 }
 
 int main(int argc, char** argv)

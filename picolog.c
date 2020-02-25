@@ -1,7 +1,6 @@
 #include "picolog.h"
 
 #include <stdarg.h>  /* va_list, va_start, va_end */
-#include <stdbool.h> /* bool, true, false */
 #include <stdio.h>   /* vsnprintf */
 #include <string.h>
 #include <time.h>
@@ -34,6 +33,7 @@ const char* const error_str_p[] =
     "Invalid argument",
     "Invalid ID",
     "Logger not enabled",
+    "Appender failed",
     "Unknown",
      0
 };
@@ -318,7 +318,10 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
     {
         if (NULL != gp_appenders[i].p_appender && gp_appenders[i].b_enabled)
         {
-            gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data);
+            if (!gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data))
+            {
+                return PLOG_ERROR_APPENDER_FAILED;
+            }
         }
     }
 

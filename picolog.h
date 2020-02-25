@@ -2,7 +2,8 @@
 #define PICOLOG_H
 
 #include <stdarg.h>
-#include <stddef.h> /* NULL, size_t */
+#include <stdbool.h> /* bool, true, false */
+#include <stddef.h>  /* NULL, size_t */
 
 #ifndef PLOG_MAX_APPENDERS
 #   define PLOG_MAX_APPENDERS 8
@@ -19,6 +20,7 @@ typedef enum
     PLOG_ERROR_INVALD_ARG,
     PLOG_ERROR_INVALD_ID,
     PLOG_ERROR_NOT_ENABLED,
+    PLOG_ERROR_APPENDER_FAILED,
     PLOG_ERROR_UNKNOWN, /* This should never happen */
     PLOG_ERROR_COUNT,
 } plog_error_t;
@@ -52,8 +54,8 @@ typedef enum
 #define PLOG_FATAL(...) \
         plog_write(PLOG_LEVEL_FATAL, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
-typedef int   (*plog_appender_t)(const char* p_msg, void* p_user_data);
-typedef size_t  plog_appender_id_t;
+typedef bool   (*plog_appender_t)(const char* p_msg, void* p_user_data);
+typedef size_t   plog_appender_id_t;
 
 const char*
 plog_error_str(plog_error_t error_code);
