@@ -203,8 +203,9 @@ plog_appender_register (plog_appender_t appender,
         if (NULL == gp_appenders[i].p_appender)
         {
             // Store and enable appender
-            gp_appenders[i].p_appender = appender;
-            gp_appenders[i].b_enabled = true;
+            gp_appenders[i].p_appender  = appender;
+            gp_appenders[i].p_user_data = user_data;
+            gp_appenders[i].b_enabled   = true;
 
             // Store appender ID (if requested)
             if (NULL != id)
@@ -239,9 +240,9 @@ plog_appender_unregister (plog_appender_id_t id)
     }
 
     // Reset appender with given ID
-    gp_appenders[id].p_appender = NULL;
+    gp_appenders[id].p_appender  = NULL;
     gp_appenders[id].p_user_data = NULL;
-    gp_appenders[id].b_enabled = false;
+    gp_appenders[id].b_enabled   = false;
 
     g_appender_count--;
 
@@ -386,7 +387,7 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
     // Send the finished entry to all enabled loggers
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
-        if (NULL != gp_appenders[i].p_appender && gp_appenders[i].b_enabled)
+        if (gp_appenders[i].b_enabled)
         {
             if (!gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data))
             {
