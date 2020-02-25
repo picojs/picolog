@@ -33,6 +33,10 @@
 #include <string.h>  /* strncat */
 #include <time.h>    /* time, strftime */
 
+/*
+ * Log entry component maximum sizes. These have been chosen to be overly
+ * generous powers of 2 for the sake of safety and simplicity.
+ */
 const size_t g_timestamp_len = 32;
 const size_t g_level_len     = 16;
 const size_t g_file_len      = 64;
@@ -45,15 +49,18 @@ const size_t g_entry_len     = g_timestamp_len +
                                g_msg_len;
 
 
-static bool         gb_initialized   = false;
-static bool         gb_enabled       = true;
-static bool         gb_timestamp     = false;
-static plog_level_t g_log_level      = PLOG_LEVEL_DEBUG;
-static bool         gb_file          = false;
-static bool         gb_func          = false;
+static bool         gb_initialized   = false; // True if logger is initialized
+static bool         gb_enabled       = true;  // True if logger is enabled
+static bool         gb_timestamp     = false; // True if timestamps are on
+static plog_level_t g_log_level      = PLOG_LEVEL_DEBUG; // Logger level
+static bool         gb_file          = false; // True if filenames/lines are on
+static bool         gb_func          = false; // True if function names are on
 
-static size_t g_appender_count = 0;
+static size_t g_appender_count = 0; // Number of registered appenders
 
+/*
+ * Error string indexed by error ID (plog_error_t).
+ */
 const char* const error_str_p[] =
 {
     "OK",
@@ -65,6 +72,9 @@ const char* const error_str_p[] =
      0
 };
 
+/*
+ * Logger level strings indexed by level ID (plog_level_t).
+ */
 const char* const level_str[] =
 {
     "TRACE",
@@ -76,6 +86,9 @@ const char* const level_str[] =
     0
 };
 
+/*
+ * Appender pointer and metadata.
+ */
 typedef struct
 {
     plog_appender_t p_appender;
@@ -96,7 +109,7 @@ try_init ()
         return;
     }
 
-    g_log_level = PLOG_LEVEL_DEBUG;
+    g_log_level = PLOG_LEVEL_DEBUG; // Default logger level is DEBUG
 
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
@@ -175,20 +188,25 @@ plog_appender_register (plog_appender_t appender,
                         void* user_data,
                         plog_appender_id_t* id)
 {
+    // Initialize logger if neccesary
     try_init();
 
+    // Check if there is space for a new appender.
     if (PLOG_MAX_APPENDERS <= g_appender_count)
     {
         return PLOG_ERROR_MAX_APPENDERS;
     }
 
+    // Iterate through appender array and find an empty slot.
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
         if (NULL == gp_appenders[i].p_appender)
         {
+            // Store and enable appender
             gp_appenders[i].p_appender = appender;
             gp_appenders[i].b_enabled = true;
 
+            // Store appender ID (if requested)
             if (NULL != id)
             {
                 *id = i;
@@ -206,8 +224,10 @@ plog_appender_register (plog_appender_t appender,
 plog_error_t
 plog_appender_unregister (plog_appender_id_t id)
 {
+    // Initialize logger if neccesary
     try_init();
 
+    // Ensure ID is valid
     if (PLOG_MAX_APPENDERS <= id)
     {
         return PLOG_ERROR_INVALD_ID;
@@ -218,6 +238,7 @@ plog_appender_unregister (plog_appender_id_t id)
         return PLOG_ERROR_INVALD_ID;
     }
 
+    // Reset appender with given ID
     gp_appenders[id].p_appender = NULL;
     gp_appenders[id].p_user_data = NULL;
     gp_appenders[id].b_enabled = false;
@@ -230,8 +251,10 @@ plog_appender_unregister (plog_appender_id_t id)
 plog_error_t
 plog_appender_enable (plog_appender_id_t id)
 {
+    // Initialize logger if neccesary
     try_init();
 
+    // Ensure ID is valid
     if (PLOG_MAX_APPENDERS <= id)
     {
         return PLOG_ERROR_INVALD_ID;
@@ -242,6 +265,7 @@ plog_appender_enable (plog_appender_id_t id)
         return PLOG_ERROR_INVALD_ID;
     }
 
+    // Enable appender
     gp_appenders[id].b_enabled = true;
 
     return PLOG_ERROR_OK;
@@ -250,8 +274,10 @@ plog_appender_enable (plog_appender_id_t id)
 plog_error_t
 plog_appender_disable (plog_appender_id_t id)
 {
+    // Initialize logger if neccesary
     try_init();
 
+    // Ensure ID is valid
     if (PLOG_MAX_APPENDERS <= id)
     {
         return PLOG_ERROR_INVALD_ID;
@@ -262,6 +288,7 @@ plog_appender_disable (plog_appender_id_t id)
         return PLOG_ERROR_INVALD_ID;
     }
 
+    // Disable appender
     gp_appenders[id].b_enabled = false;
 
     return PLOG_ERROR_OK;

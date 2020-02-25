@@ -1,3 +1,33 @@
+/** @file picolog.h
+ * picounit is a minimal, yet flexible logging framework written in C99. Due to
+ * its small footprint, it is suitable for embedded as well as general
+ * software development.
+ */
+
+/*=============================================================================
+ * MIT License
+ *
+ * Copyright (c) 2020 James McLean
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+=============================================================================*/
+
 #ifndef PICOLOG_H
 #define PICOLOG_H
 
@@ -5,13 +35,11 @@
 #include <stdbool.h> /* bool, true, false */
 #include <stddef.h>  /* NULL, size_t */
 
-#ifndef PLOG_MAX_APPENDERS
-#   define PLOG_MAX_APPENDERS 8
-#endif /* PLOG_MAX_APPENDERS */
-
-#ifndef PLOG_MAX_MSG_LENGTH
-#   define PLOG_MAX_MSG_LENGTH 512
-#endif /* PLOG_MAX_MSG_LENGTH */
+/*
+ * Configuration constants.
+ */
+#define PLOG_MAX_APPENDERS  8
+#define PLOG_MAX_MSG_LENGTH 512
 
 typedef enum
 {
@@ -86,6 +114,11 @@ plog_error_t plog_appender_disable(plog_appender_id_t id);
 void plog_enable();
 
 void plog_disable();
+
+/*
+ * NOTE: It is inadvisable to call this function directly. Use the macros
+ * instead.
+ */
 
 plog_error_t plog_write(plog_level_t level,
                         const char* file,
