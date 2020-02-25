@@ -130,7 +130,7 @@ plog_error_str(plog_error_t error_code)
     }
     else
     {
-        return error_str_p[PLOG_ERROR_UNKNOWN];
+        return error_str_p[PLOG_ERROR_INVALD_ID];
     }
 }
 

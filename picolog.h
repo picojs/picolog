@@ -1,5 +1,5 @@
 /** @file picolog.h
- * picounit is a minimal, yet flexible logging framework written in C99. Due to
+ * picolog is a minimal, yet flexible logging framework written in C99. Due to
  * its small footprint, it is suitable for embedded as well as general
  * software development.
  */
@@ -41,6 +41,9 @@
 #define PLOG_MAX_APPENDERS  8
 #define PLOG_MAX_MSG_LENGTH 512
 
+/**
+ * Various error codes.
+ */
 typedef enum
 {
     PLOG_ERROR_OK = 0,
@@ -48,10 +51,14 @@ typedef enum
     PLOG_ERROR_INVALD_ARG,
     PLOG_ERROR_INVALD_ID,
     PLOG_ERROR_APPENDER_FAILED,
-    PLOG_ERROR_UNKNOWN, /* This should never happen */
+    PLOG_ERROR_UNKNOWN, // This should never happen
     PLOG_ERROR_COUNT,
 } plog_error_t;
 
+/**
+ * These codes allow different layers of granularity when logging. See the
+ * documentation for the function `plog_set_level` for more information.
+ */
 typedef enum
 {
     PLOG_LEVEL_TRACE = 0,
@@ -63,29 +70,89 @@ typedef enum
     PLOG_LEVEL_COUNT
 } plog_level_t;
 
+/**
+ * Writes a TRACE level entry to the log.
+ */
 #define PLOG_TRACE(...) \
         plog_write(PLOG_LEVEL_TRACE, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
+/**
+ * Writes a DEBUG level entry to the log.
+ */
 #define PLOG_DEBUG(...) \
         plog_write(PLOG_LEVEL_DEBUG, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
+/**
+ * Writes an INFO level entry to the log.
+ */
 #define PLOG_INFO(...) \
         plog_write(PLOG_LEVEL_INFO,  __FILE__, __LINE__, __func__, __VA_ARGS__)
 
+/**
+ * Writes a WARN level entry to the log.
+ */
 #define PLOG_WARN(...) \
         plog_write(PLOG_LEVEL_WARN,  __FILE__, __LINE__, __func__, __VA_ARGS__)
 
+/**
+ * Writes a ERROR level entry to the log.
+ */
 #define PLOG_ERROR(...) \
         plog_write(PLOG_LEVEL_ERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
+/**
+ * Writes a FATAL level entry to the log.
+ */
 #define PLOG_FATAL(...) \
         plog_write(PLOG_LEVEL_FATAL, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
-typedef bool   (*plog_appender_t)(const char* p_msg, void* p_user_data);
-typedef size_t   plog_appender_id_t;
+/**
+ * Appender function definition. An appender writes a log entry to an output
+ * stream.
+ */
+typedef bool (*plog_appender_t)(const char* p_entry, void* p_user_data);
 
+/**
+ * Identifies a registered appender.
+ */
+typedef size_t plog_appender_id_t;
+
+/**
+ * Returns a descriptive error message corresponding to the specified error
+ * code.
+ */
 const char*
 plog_error_str(plog_error_t error_code);
+
+/**
+ * Registers (adds appender to logger) and enables the specified appender.
+ *
+ * @param appender    The appender function to register.
+ * @param p_user_data A pointer supplied to the appender function when writing
+ *                    a log entry. This pointer is not modified by the logger.
+ *                    If not required simply pass in NULL for this parameter.
+ * @param id          An identifier for the logger. If not required simply pass
+ *                    in NULL for this parameter.
+ * @return            An error code.
+ */
+plog_error_t plog_appender_register(plog_appender_t appender,
+                                    void* p_user_data,
+                                    plog_appender_id_t* id);
+
+/**
+ * Unregisters appender (removes the appender from the logger)
+ *
+ * @param id The appender to unreqister.
+ */
+plog_error_t plog_appender_unregister(plog_appender_id_t id);
+
+plog_error_t plog_appender_enable(plog_appender_id_t id);
+
+plog_error_t plog_appender_disable(plog_appender_id_t id);
+
+void plog_enable();
+
+void plog_disable();
 
 plog_error_t plog_set_level(plog_level_t level);
 
@@ -100,20 +167,6 @@ void plog_file_off();
 void plog_func_on();
 
 void plog_func_off();
-
-plog_error_t plog_appender_register(plog_appender_t appender,
-                                    void* p_user_data,
-                                    plog_appender_id_t* id);
-
-plog_error_t plog_appender_unregister(plog_appender_id_t id);
-
-plog_error_t plog_appender_enable(plog_appender_id_t id);
-
-plog_error_t plog_appender_disable(plog_appender_id_t id);
-
-void plog_enable();
-
-void plog_disable();
 
 /*
  * NOTE: It is inadvisable to call this function directly. Use the macros
