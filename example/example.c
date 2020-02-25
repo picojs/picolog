@@ -16,12 +16,12 @@ bool appender2(const char* p_msg, void* p_user_data)
 
 void log_all()
 {
-    PLOG_TRACE ("Test %d", 10);
-    PLOG_DEBUG ("Test %d", 10);
-    PLOG_INFO  ("Test %d", 10);
-    PLOG_WARN  ("Test %d", 10);
-    PLOG_ERROR ("Test %d", 10);
-    PLOG_FATAL ("Test %d", 10);
+    PLOG_TRACE ("Test %d", 0);
+    PLOG_DEBUG ("Test %d", 1);
+    PLOG_INFO  ("Test %d", 2);
+    PLOG_WARN  ("Test %d", 3);
+    PLOG_ERROR ("Test %d", 4);
+    PLOG_FATAL ("Test %d", 5);
 }
 
 int main(int argc, char** argv)

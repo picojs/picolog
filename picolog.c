@@ -1,9 +1,37 @@
+/*=============================================================================
+ * MIT License
+ *
+ * Copyright (c) 2020 James McLean
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+=============================================================================*/
+
+/*
+ * Implementation
+ */
+
 #include "picolog.h"
 
 #include <stdarg.h>  /* va_list, va_start, va_end */
 #include <stdio.h>   /* vsnprintf */
-#include <string.h>
-#include <time.h>
+#include <string.h>  /* strncat */
+#include <time.h>    /* time, strftime */
 
 const size_t g_timestamp_len = 32;
 const size_t g_level_len     = 16;
@@ -57,6 +85,9 @@ typedef struct
 
 static appender_info_t gp_appenders[PLOG_MAX_APPENDERS];
 
+/*
+ * Initializes the logger provided it has not been initialized.
+ */
 static void
 try_init ()
 {
@@ -248,6 +279,9 @@ plog_disable()
     gb_enabled = false;
 }
 
+/*
+ * Formats the current time as as string.
+ */
 static char*
 time_str(char* p_str, size_t len)
 {
@@ -259,24 +293,30 @@ time_str(char* p_str, size_t len)
 plog_error_t
 plog_write (plog_level_t level, const char* file, unsigned line, const char* func, const char* p_fmt, ...)
 {
+    // Only write entry if there are registered appenders and the logger is
+    // enabled
     if (0 == g_appender_count || !gb_enabled)
     {
         return PLOG_ERROR_OK;
     }
 
+    // Report invalid logger level
     if (PLOG_LEVEL_COUNT <= level)
     {
         return PLOG_ERROR_INVALD_ARG;
     }
 
+    // Only write entry if the current logger level is less than or equal to the
+    // specified level
     if (g_log_level > level)
     {
         return PLOG_ERROR_OK;
     }
 
-    char p_entry_str[g_entry_len + 1];
-    p_entry_str[0] = '\0';
+    char p_entry_str[g_entry_len + 1]; // Ensure there is space for null char
+    p_entry_str[0] = '\0'; // Ensure the entry is null terminated
 
+    // Append the timestamp
     if (gb_timestamp)
     {
         char p_time_str[g_timestamp_len];
@@ -285,10 +325,12 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
         strncat(p_entry_str, p_time_str, sizeof(p_entry_str));
     }
 
+    // Append the logger level
     char p_level_str[g_level_len];
     snprintf(p_level_str, sizeof(p_level_str), "[%s] ", level_str[level]);
     strncat(p_entry_str, p_level_str, sizeof(p_entry_str));
 
+    // Append the filename/line number
     if (gb_file)
     {
         char p_file_str[g_file_len];
@@ -296,6 +338,7 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
         strncat(p_entry_str, p_file_str, sizeof(p_entry_str));
     }
 
+    // Append the function name
     if (gb_func)
     {
         char p_func_str[g_func_len];
@@ -303,6 +346,7 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
         strncat(p_entry_str, p_func_str, sizeof(p_entry_str));
     }
 
+    // Append the log message
     char p_msg_str[g_msg_len];
 
     va_list args;
@@ -312,6 +356,7 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
 
     strncat(p_entry_str, p_msg_str, sizeof(p_entry_str));
 
+    // Send the finished entry to all enabled loggers
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
         if (NULL != gp_appenders[i].p_appender && gp_appenders[i].b_enabled)
@@ -325,3 +370,5 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
 
     return PLOG_ERROR_OK;
 }
+
+/* EoF */
