@@ -21,6 +21,8 @@ int main(int argc, char** argv)
 
     plog_enable();
     plog_timestamp_on();
+    plog_file_on();
+    plog_func_on();
 
     PLOG_INFO("test %d", 10);
 

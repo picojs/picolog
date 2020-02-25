@@ -10,8 +10,7 @@ const size_t g_timestamp_len = 32;
 const size_t g_level_len     = 16;
 const size_t g_file_len      = 64;
 const size_t g_func_len      = 32;
-const size_t g_msg_len       = 512;
-
+const size_t g_msg_len       = PLOG_MAX_MSG_LENGTH;
 const size_t g_entry_len     = g_timestamp_len +
                                g_level_len     +
                                g_file_len      +
@@ -21,7 +20,7 @@ const size_t g_entry_len     = g_timestamp_len +
 
 static bool         gb_initialized   = false;
 static bool         gb_enabled       = false;
-static bool         gb_timestamp    = false;
+static bool         gb_timestamp     = false;
 static plog_level_t g_log_level      = PLOG_LEVEL_DEBUG;
 static bool         gb_file          = false;
 static bool         gb_func          = false;
@@ -84,11 +83,11 @@ plog_error_str(plog_error_t error_code)
 {
     if (error_code < 0 || error_code >= PLOG_ERROR_COUNT)
     {
-        return error_str_p[(size_t)error_code];
+        return error_str_p[error_code];
     }
     else
     {
-        return error_str_p[(size_t)PLOG_ERROR_UNKNOWN];
+        return error_str_p[PLOG_ERROR_UNKNOWN];
     }
 }
 
@@ -117,6 +116,30 @@ void
 plog_timestamp_off ()
 {
     gb_timestamp = true;
+}
+
+void
+plog_file_on ()
+{
+    gb_file = true;
+}
+
+void
+plog_file_off ()
+{
+    gb_file = false;
+}
+
+void
+plog_func_on ()
+{
+    gb_func = true;
+}
+
+void
+plog_func_off ()
+{
+    gb_func = false;
 }
 
 plog_error_t
@@ -224,7 +247,6 @@ plog_enable()
 void
 plog_disable()
 {
-    try_init();
     gb_enabled = false;
 }
 
@@ -261,9 +283,6 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
     {
         char p_time_str[g_timestamp_len];
         char p_tmp_str[g_timestamp_len];
-
-        //time_str(p_time_str, sizeof(p_time_str));
-        //snprintf(p_time_str, sizeof(p_time_str), "[%s] ", p_time_str);
         snprintf(p_time_str, sizeof(p_time_str), "[%s] ", time_str(p_tmp_str, sizeof(p_tmp_str)));
         strncat(p_entry_str, p_time_str, sizeof(p_entry_str));
     }
@@ -299,7 +318,7 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
     {
         if (NULL != gp_appenders[i].p_appender && gp_appenders[i].b_enabled)
         {
-                gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data);
+            gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data);
         }
     }
 

@@ -9,7 +9,7 @@
 #endif /* PLOG_MAX_APPENDERS */
 
 #ifndef PLOG_MAX_MSG_LENGTH
-#   define PLOG_MAX_MSG_LENGTH 1024
+#   define PLOG_MAX_MSG_LENGTH 512
 #endif /* PLOG_MAX_MSG_LENGTH */
 
 typedef enum
@@ -64,6 +64,14 @@ plog_error_t plog_set_level(plog_level_t level);
 void plog_timestamp_on();
 
 void plog_timestamp_off();
+
+void plog_file_on();
+
+void plog_file_off();
+
+void plog_func_on();
+
+void plog_func_off();
 
 plog_error_t plog_appender_register(plog_appender_t appender,
                                     void* p_user_data,
