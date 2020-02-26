@@ -135,55 +135,6 @@ plog_error_str(plog_error_t error_code)
 }
 
 plog_error_t
-plog_set_level (plog_level_t level)
-{
-    if (level < 0 || level >= PLOG_LEVEL_COUNT)
-    {
-        return PLOG_ERROR_INVALD_ARG;
-    }
-
-    g_log_level = level;
-
-    return PLOG_ERROR_OK;
-}
-
-void
-plog_timestamp_on ()
-{
-    gb_timestamp = true;
-}
-
-void
-plog_timestamp_off ()
-{
-    gb_timestamp = true;
-}
-
-void
-plog_file_on ()
-{
-    gb_file = true;
-}
-
-void
-plog_file_off ()
-{
-    gb_file = false;
-}
-
-void
-plog_func_on ()
-{
-    gb_func = true;
-}
-
-void
-plog_func_off ()
-{
-    gb_func = false;
-}
-
-plog_error_t
 plog_appender_register (plog_appender_t appender,
                         void* user_data,
                         plog_appender_id_t* id)
@@ -305,6 +256,55 @@ void
 plog_disable()
 {
     gb_enabled = false;
+}
+
+plog_error_t
+plog_set_level (plog_level_t level)
+{
+    if (level < 0 || level >= PLOG_LEVEL_COUNT)
+    {
+        return PLOG_ERROR_INVALD_ARG;
+    }
+
+    g_log_level = level;
+
+    return PLOG_ERROR_OK;
+}
+
+void
+plog_timestamp_on ()
+{
+    gb_timestamp = true;
+}
+
+void
+plog_timestamp_off ()
+{
+    gb_timestamp = true;
+}
+
+void
+plog_file_on ()
+{
+    gb_file = true;
+}
+
+void
+plog_file_off ()
+{
+    gb_file = false;
+}
+
+void
+plog_func_on ()
+{
+    gb_func = true;
+}
+
+void
+plog_func_off ()
+{
+    gb_func = false;
 }
 
 /*

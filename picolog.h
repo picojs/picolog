@@ -31,7 +31,7 @@
 #ifndef PICOLOG_H
 #define PICOLOG_H
 
-#include <stdarg.h>
+#include <stdarg.h>  /* ... */
 #include <stdbool.h> /* bool, true, false */
 #include <stddef.h>  /* NULL, size_t */
 
@@ -130,10 +130,10 @@ plog_error_str(plog_error_t error_code);
  * @param appender    The appender function to register.
  * @param p_user_data A pointer supplied to the appender function when writing
  *                    a log entry. This pointer is not modified by the logger.
- *                    If not required simply pass in NULL for this parameter.
- * @param id          An identifier for the logger. If not required simply pass
- *                    in NULL for this parameter.
- * @return            An error code.
+ *                    If not required pass in NULL for this parameter.
+ * @param id          An identifier for the logger. If not required pass in NULL
+ *                    for this parameter.
+ * @return            An error code on failure
  */
 plog_error_t plog_appender_register(plog_appender_t appender,
                                     void* p_user_data,
@@ -143,36 +143,86 @@ plog_error_t plog_appender_register(plog_appender_t appender,
  * Unregisters appender (removes the appender from the logger)
  *
  * @param id The appender to unreqister.
+ * @return An error code on failure
  */
 plog_error_t plog_appender_unregister(plog_appender_id_t id);
 
+/**
+ * Enables the specified appender. NOTE: Appenders are enabled by default after
+ * registration.
+ *
+ * @param id The logger to enable.
+ * @return   An error code on failure.
+ */
 plog_error_t plog_appender_enable(plog_appender_id_t id);
 
+/**
+ * Disables the specified appender.
+ *
+ * @param id The logger to disable.
+ * @return   An error code on failure.
+ */
 plog_error_t plog_appender_disable(plog_appender_id_t id);
 
+/**
+ * Enables logging. Note: Logging is enabled by default.
+ */
 void plog_enable();
 
+/**
+ * Disables logging.
+ */
 void plog_disable();
 
+/**
+ * Sets the logging level. Only those messages of equal or higher priority
+ * (severity) will be logged.
+ *
+ * @param level The new global logging threshold
+ * @return      An error code on failure.
+ */
 plog_error_t plog_set_level(plog_level_t level);
 
+/**
+ * Turns timestamps on. NOTE: Off by default.
+ */
 void plog_timestamp_on();
 
+/**
+ * Turns timestamps off.
+ */
 void plog_timestamp_off();
 
+/**
+ * Turns filenames/line numbers on. Note: Off by default.
+ */
 void plog_file_on();
 
+/**
+ * Turns filenames/line numbers off.
+ */
 void plog_file_off();
 
+/**
+ * Turns function reporting on. Note: Off by default.
+ */
 void plog_func_on();
 
+/**
+ * Turns function reporting off.
+ */
 void plog_func_off();
 
-/*
- * NOTE: It is inadvisable to call this function directly. Use the macros
+/**
+ * Formats and sends a log entry to registered appenders. This function is
+ * conditionally thread-safe (provided that the appenders ARE thread-safe) in
+ * the sense that it does not write to shared memory. It is, however,
+ * susceptible to races conditions in that the order of log entries is
+ * ultimately determined by the timing differencs of the individual threads.
+ *
+ * Note: It is inadvisable to call this function directly. Use the macros
  * instead.
  */
-
 plog_error_t plog_write(plog_level_t level,
                         const char* file,
                         unsigned line,
