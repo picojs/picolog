@@ -59,20 +59,6 @@ static bool         gb_func          = false; // True if function names are on
 static size_t g_appender_count = 0; // Number of registered appenders
 
 /*
- * Error string indexed by error ID (plog_error_t).
- */
-const char* const error_str_p[] =
-{
-    "OK",
-    "Max appenders reached",
-    "Invalid argument",
-    "Invalid ID",
-    "Appender failed",
-    "Unknown",
-     0
-};
-
-/*
  * Logger level strings indexed by level ID (plog_level_t).
  */
 const char* const level_str[] =
@@ -121,8 +107,8 @@ try_init ()
     gb_initialized = true;
 }
 
-const char*
-plog_error_str(plog_error_t error_code)
+/*const char*
+plog_error_str(void error_code)
 {
     if (error_code < 0 || error_code >= PLOG_ERROR_COUNT)
     {
@@ -132,9 +118,9 @@ plog_error_str(plog_error_t error_code)
     {
         return error_str_p[PLOG_ERROR_INVALD_ID];
     }
-}
+}*/
 
-plog_error_t
+void
 plog_appender_register (plog_appender_t appender,
                         void* user_data,
                         plog_appender_id_t* id)
@@ -143,10 +129,7 @@ plog_appender_register (plog_appender_t appender,
     try_init();
 
     // Check if there is space for a new appender.
-    if (PLOG_MAX_APPENDERS <= g_appender_count)
-    {
-        return PLOG_ERROR_MAX_APPENDERS;
-    }
+    PLOG_ASSERT(g_appender_count < PLOG_MAX_APPENDERS);
 
     // Iterate through appender array and find an empty slot.
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
@@ -166,29 +149,25 @@ plog_appender_register (plog_appender_t appender,
 
             g_appender_count++;
 
-            return PLOG_ERROR_OK;
+            return;
         }
     }
 
-    return PLOG_ERROR_UNKNOWN;
+    // This should never happen
+    PLOG_ASSERT(false);
 }
 
-plog_error_t
+void
 plog_appender_unregister (plog_appender_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
 
     // Ensure ID is valid
-    if (PLOG_MAX_APPENDERS <= id)
-    {
-        return PLOG_ERROR_INVALD_ID;
-    }
+    PLOG_ASSERT(id < PLOG_MAX_APPENDERS);
 
-    if (NULL == gp_appenders[id].p_appender)
-    {
-        return PLOG_ERROR_INVALD_ID;
-    }
+    // Ensure appender is registered
+    PLOG_ASSERT(NULL != gp_appenders[id].p_appender);
 
     // Reset appender with given ID
     gp_appenders[id].p_appender  = NULL;
@@ -196,54 +175,38 @@ plog_appender_unregister (plog_appender_id_t id)
     gp_appenders[id].b_enabled   = false;
 
     g_appender_count--;
-
-    return PLOG_ERROR_OK;
 }
 
-plog_error_t
+void
 plog_appender_enable (plog_appender_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
 
     // Ensure ID is valid
-    if (PLOG_MAX_APPENDERS <= id)
-    {
-        return PLOG_ERROR_INVALD_ID;
-    }
+    PLOG_ASSERT(id < PLOG_MAX_APPENDERS);
 
-    if (NULL == gp_appenders[id].p_appender)
-    {
-        return PLOG_ERROR_INVALD_ID;
-    }
+    // Ensure appender is registered
+    PLOG_ASSERT(NULL != gp_appenders[id].p_appender);
 
     // Enable appender
     gp_appenders[id].b_enabled = true;
-
-    return PLOG_ERROR_OK;
 }
 
-plog_error_t
+void
 plog_appender_disable (plog_appender_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
 
     // Ensure ID is valid
-    if (PLOG_MAX_APPENDERS <= id)
-    {
-        return PLOG_ERROR_INVALD_ID;
-    }
+    PLOG_ASSERT(id < PLOG_MAX_APPENDERS);
 
-    if (NULL == gp_appenders[id].p_appender)
-    {
-        return PLOG_ERROR_INVALD_ID;
-    }
+    // Ensure appender is registered
+    PLOG_ASSERT(NULL != gp_appenders[id].p_appender);
 
     // Disable appender
     gp_appenders[id].b_enabled = false;
-
-    return PLOG_ERROR_OK;
 }
 
 void
@@ -258,17 +221,13 @@ plog_disable()
     gb_enabled = false;
 }
 
-plog_error_t
+void
 plog_set_level (plog_level_t level)
 {
-    if (level < 0 || level >= PLOG_LEVEL_COUNT)
-    {
-        return PLOG_ERROR_INVALD_ARG;
-    }
+    // Ensure level is valid
+    PLOG_ASSERT(level >= 0 && level < PLOG_LEVEL_COUNT);
 
     g_log_level = level;
-
-    return PLOG_ERROR_OK;
 }
 
 void
@@ -318,27 +277,24 @@ time_str(char* p_str, size_t len)
     return p_str;
 }
 
-plog_error_t
+void
 plog_write (plog_level_t level, const char* file, unsigned line, const char* func, const char* p_fmt, ...)
 {
     // Only write entry if there are registered appenders and the logger is
     // enabled
     if (0 == g_appender_count || !gb_enabled)
     {
-        return PLOG_ERROR_OK;
+        return;
     }
 
-    // Report invalid logger level
-    if (PLOG_LEVEL_COUNT <= level)
-    {
-        return PLOG_ERROR_INVALD_ARG;
-    }
+    // Ensure valid log level
+    PLOG_ASSERT(level < PLOG_LEVEL_COUNT);
 
     // Only write entry if the current logger level is less than or equal to the
     // specified level
     if (g_log_level > level)
     {
-        return PLOG_ERROR_OK;
+        return;
     }
 
     char p_entry_str[g_entry_len + 1]; // Ensure there is space for null char
@@ -389,14 +345,10 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
     {
         if (gp_appenders[i].b_enabled)
         {
-            if (!gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data))
-            {
-                return PLOG_ERROR_APPENDER_FAILED;
-            }
+            gp_appenders[i].p_appender(p_entry_str,
+                                       gp_appenders[i].p_user_data);
         }
     }
-
-    return PLOG_ERROR_OK;
 }
 
 /* EoF */

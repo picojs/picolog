@@ -2,16 +2,14 @@
 
 #include "../picolog.h"
 
-bool appender1(const char* p_msg, void* p_user_data)
+void appender1(const char* p_msg, void* p_user_data)
 {
     printf("Appender 1: %s\n", p_msg);
-    return true;
 }
 
-bool appender2(const char* p_msg, void* p_user_data)
+void appender2(const char* p_msg, void* p_user_data)
 {
     printf("Appender 2: %s\n", p_msg);
-    return true;
 }
 
 void log_all()

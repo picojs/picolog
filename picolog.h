@@ -31,29 +31,17 @@
 #ifndef PICOLOG_H
 #define PICOLOG_H
 
+#include <assert.h>  /* assert */
 #include <stdarg.h>  /* ... */
 #include <stdbool.h> /* bool, true, false */
 #include <stddef.h>  /* NULL, size_t */
 
 /*
- * Configuration constants.
+ * Configuration constants/macros.
  */
 #define PLOG_MAX_APPENDERS  8
 #define PLOG_MAX_MSG_LENGTH 512
-
-/**
- * Various error codes.
- */
-typedef enum
-{
-    PLOG_ERROR_OK = 0,
-    PLOG_ERROR_MAX_APPENDERS,
-    PLOG_ERROR_INVALD_ARG,
-    PLOG_ERROR_INVALD_ID,
-    PLOG_ERROR_APPENDER_FAILED,
-    PLOG_ERROR_UNKNOWN, // This should never happen
-    PLOG_ERROR_COUNT,
-} plog_error_t;
+#define PLOG_ASSERT(expr)   assert(expr)
 
 /**
  * These codes allow different layers of granularity when logging. See the
@@ -110,19 +98,12 @@ typedef enum
  * Appender function definition. An appender writes a log entry to an output
  * stream.
  */
-typedef bool (*plog_appender_t)(const char* p_entry, void* p_user_data);
+typedef void (*plog_appender_t)(const char* p_entry, void* p_user_data);
 
 /**
  * Identifies a registered appender.
  */
 typedef size_t plog_appender_id_t;
-
-/**
- * Returns a descriptive error message corresponding to the specified error
- * code.
- */
-const char*
-plog_error_str(plog_error_t error_code);
 
 /**
  * Registers (adds appender to logger) and enables the specified appender.
@@ -135,7 +116,7 @@ plog_error_str(plog_error_t error_code);
  *                    for this parameter.
  * @return            An error code on failure
  */
-plog_error_t plog_appender_register(plog_appender_t appender,
+void plog_appender_register(plog_appender_t appender,
                                     void* p_user_data,
                                     plog_appender_id_t* id);
 
@@ -145,7 +126,7 @@ plog_error_t plog_appender_register(plog_appender_t appender,
  * @param id The appender to unreqister.
  * @return An error code on failure
  */
-plog_error_t plog_appender_unregister(plog_appender_id_t id);
+void plog_appender_unregister(plog_appender_id_t id);
 
 /**
  * Enables the specified appender. NOTE: Appenders are enabled by default after
@@ -154,7 +135,7 @@ plog_error_t plog_appender_unregister(plog_appender_id_t id);
  * @param id The logger to enable.
  * @return   An error code on failure.
  */
-plog_error_t plog_appender_enable(plog_appender_id_t id);
+void plog_appender_enable(plog_appender_id_t id);
 
 /**
  * Disables the specified appender.
@@ -162,7 +143,7 @@ plog_error_t plog_appender_enable(plog_appender_id_t id);
  * @param id The logger to disable.
  * @return   An error code on failure.
  */
-plog_error_t plog_appender_disable(plog_appender_id_t id);
+void plog_appender_disable(plog_appender_id_t id);
 
 /**
  * Enables logging. Note: Logging is enabled by default.
@@ -181,7 +162,7 @@ void plog_disable();
  * @param level The new global logging threshold
  * @return      An error code on failure.
  */
-plog_error_t plog_set_level(plog_level_t level);
+void plog_set_level(plog_level_t level);
 
 /**
  * Turns timestamps on. NOTE: Off by default.
@@ -223,11 +204,11 @@ void plog_func_off();
  * Note: It is inadvisable to call this function directly. Use the macros
  * instead.
  */
-plog_error_t plog_write(plog_level_t level,
-                        const char* file,
-                        unsigned line,
-                        const char* func,
-                        const char* p_fmt, ...);
+void plog_write(plog_level_t level,
+                const char* file,
+                unsigned line,
+                const char* func,
+                const char* p_fmt, ...);
 
 
 #endif /* PICOLOG_H */
