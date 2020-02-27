@@ -14,12 +14,12 @@ void appender2(const char* p_msg, void* p_user_data)
 
 void log_all()
 {
-    PLOG_TRACE ("Test %d", 0);
-    PLOG_DEBUG ("Test %d", 1);
-    PLOG_INFO  ("Test %d", 2);
-    PLOG_WARN  ("Test %d", 3);
-    PLOG_ERROR ("Test %d", 4);
-    PLOG_FATAL ("Test %d", 5);
+    PLOG_TRACE ("Test message: %d", 0);
+    PLOG_DEBUG ("Test message: %d", 1);
+    PLOG_INFO  ("Test message: %d", 2);
+    PLOG_WARN  ("Test message: %d", 3);
+    PLOG_ERROR ("Test message: %d", 4);
+    PLOG_FATAL ("Test message: %d", 5);
 }
 
 int main(int argc, char** argv)
@@ -43,30 +43,30 @@ int main(int argc, char** argv)
 
     printf("================== Level Off ==================\n");
 
-    plog_level_off();
+    plog_report_level_off();
     log_all();
 
     printf("================== Level On/Set Level (INFO) ==================\n");
 
-    plog_level_on();
+    plog_report_level_on();
     plog_set_level(PLOG_LEVEL_INFO);
     log_all();
 
     printf("================== Timestamp ==================\n");
 
-    plog_timestamp_on();
+    plog_report_timestamp_on();
     log_all();
 
     printf("================== File ==================\n");
 
 
-    plog_file_on();
+    plog_report_file_on();
     log_all();
 
     printf("================== Func ==================\n");
 
 
-    plog_func_on();
+    plog_report_func_on();
     log_all();
 
 
