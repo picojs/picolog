@@ -52,6 +52,7 @@ const size_t g_entry_len     = g_timestamp_len +
 static bool         gb_initialized   = false; // True if logger is initialized
 static bool         gb_enabled       = true;  // True if logger is enabled
 static bool         gb_timestamp     = false; // True if timestamps are on
+static bool         gb_level         = true;  // True is level reporting is on
 static plog_level_t g_log_level      = PLOG_LEVEL_DEBUG; // Logger level
 static bool         gb_file          = false; // True if filenames/lines are on
 static bool         gb_func          = false; // True if function names are on
@@ -243,6 +244,18 @@ plog_timestamp_off ()
 }
 
 void
+plog_level_on ()
+{
+    gb_level = true;
+}
+
+void
+plog_level_off ()
+{
+    gb_level = false;
+}
+
+void
 plog_file_on ()
 {
     gb_file = true;
@@ -310,9 +323,12 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
     }
 
     // Append the logger level
-    char p_level_str[g_level_len];
-    snprintf(p_level_str, sizeof(p_level_str), "[%s] ", level_str[level]);
-    strncat(p_entry_str, p_level_str, sizeof(p_entry_str));
+    if (gb_level)
+    {
+        char p_level_str[g_level_len];
+        snprintf(p_level_str, sizeof(p_level_str), "[%s] ", level_str[level]);
+        strncat(p_entry_str, p_level_str, sizeof(p_entry_str));
+    }
 
     // Append the filename/line number
     if (gb_file)

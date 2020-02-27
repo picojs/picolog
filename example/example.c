@@ -41,8 +41,14 @@ int main(int argc, char** argv)
     plog_appender_disable(id2);
     log_all();
 
-    printf("================== Level (INFO) ==================\n");
+    printf("================== Level Off ==================\n");
 
+    plog_level_off();
+    log_all();
+
+    printf("================== Level On/Set Level (INFO) ==================\n");
+
+    plog_level_on();
     plog_set_level(PLOG_LEVEL_INFO);
     log_all();
 
