@@ -108,19 +108,6 @@ try_init ()
     gb_initialized = true;
 }
 
-/*const char*
-plog_error_str(void error_code)
-{
-    if (error_code < 0 || error_code >= PLOG_ERROR_COUNT)
-    {
-        return error_str_p[error_code];
-    }
-    else
-    {
-        return error_str_p[PLOG_ERROR_INVALD_ID];
-    }
-}*/
-
 void
 plog_appender_register (plog_appender_t appender,
                         void* user_data,

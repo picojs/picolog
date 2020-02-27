@@ -116,8 +116,8 @@ typedef size_t plog_appender_id_t;
  *                    for this parameter.
  */
 void plog_appender_register(plog_appender_t appender,
-                                    void* p_user_data,
-                                    plog_appender_id_t* id);
+                            void* p_user_data,
+                            plog_appender_id_t* id);
 
 /**
  * Unregisters appender (removes the appender from the logger)
