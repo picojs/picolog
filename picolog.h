@@ -162,42 +162,42 @@ void plog_set_level(plog_level_t level);
 /**
  * Turns timestamp reporting on. NOTE: Off by default.
  */
-void plog_report_timestamp_on();
+void plog_turn_timestamp_on();
 
 /**
  * Turns timestamp reporting off.
  */
-void plog_report_timestamp_off();
+void plog_turn_timestamp_off();
 
 /**
  * Turns log level reporting on. NOTE: On by default.
  */
-void plog_report_level_on();
+void plog_turn_level_on();
 
 /**
  * Turns log level reporting off.
  */
-void plog_report_level_off();
+void plog_turn_level_off();
 
 /**
  * Turns filename/line number reporting on. NOTE: Off by default.
  */
-void plog_report_file_on();
+void plog_turn_file_on();
 
 /**
  * Turns filename/line number reporting off.
  */
-void plog_report_file_off();
+void plog_turn_file_off();
 
 /**
  * Turns function name reporting on. NOTE: Off by default.
  */
-void plog_report_func_on();
+void plog_turn_func_on();
 
 /**
  * Turns function name reporting off.
  */
-void plog_report_func_off();
+void plog_turn_func_off();
 
 /**
  * Formats and sends a log entry to the registered appenders. This function is

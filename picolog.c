@@ -220,49 +220,49 @@ plog_set_level (plog_level_t level)
 }
 
 void
-plog_report_timestamp_on ()
+plog_turn_timestamp_on ()
 {
     gb_timestamp = true;
 }
 
 void
-plog_report_timestamp_off ()
+plog_turn_timestamp_off ()
 {
     gb_timestamp = true;
 }
 
 void
-plog_report_level_on ()
+plog_turn_level_on ()
 {
     gb_level = true;
 }
 
 void
-plog_report_level_off ()
+plog_turn_level_off ()
 {
     gb_level = false;
 }
 
 void
-plog_report_file_on ()
+plog_turn_file_on ()
 {
     gb_file = true;
 }
 
 void
-plog_report_file_off ()
+plog_turn_file_off ()
 {
     gb_file = false;
 }
 
 void
-plog_report_func_on ()
+plog_turn_func_on ()
 {
     gb_func = true;
 }
 
 void
-plog_report_func_off ()
+plog_turn_func_off ()
 {
     gb_func = false;
 }

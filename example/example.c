@@ -43,30 +43,30 @@ int main(int argc, char** argv)
 
     printf("================== Level Off ==================\n");
 
-    plog_report_level_off();
+    plog_turn_level_off();
     log_all();
 
     printf("================== Level On/Set Level (INFO) ==================\n");
 
-    plog_report_level_on();
+    plog_turn_level_on();
     plog_set_level(PLOG_LEVEL_INFO);
     log_all();
 
     printf("================== Timestamp ==================\n");
 
-    plog_report_timestamp_on();
+    plog_turn_timestamp_on();
     log_all();
 
     printf("================== File ==================\n");
 
 
-    plog_report_file_on();
+    plog_turn_file_on();
     log_all();
 
     printf("================== Func ==================\n");
 
 
-    plog_report_func_on();
+    plog_turn_func_on();
     log_all();
 
 
