@@ -45,7 +45,7 @@
 
 /**
  * These codes allow different layers of granularity when logging. See the
- * documentation for the function `plog_set_level` for more information.
+ * documentation of the `plog_set_level` function for more information.
  */
 typedef enum
 {
@@ -59,51 +59,51 @@ typedef enum
 } plog_level_t;
 
 /**
- * Writes a TRACE level entry to the log.
+ * Writes a TRACE level message to the log.
  */
 #define PLOG_TRACE(...) \
         plog_write(PLOG_LEVEL_TRACE, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /**
- * Writes a DEBUG level entry to the log.
+ * Writes a DEBUG level message to the log.
  */
 #define PLOG_DEBUG(...) \
         plog_write(PLOG_LEVEL_DEBUG, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /**
- * Writes an INFO level entry to the log.
+ * Writes an INFO level message to the log.
  */
 #define PLOG_INFO(...) \
         plog_write(PLOG_LEVEL_INFO,  __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /**
- * Writes a WARN level entry to the log.
+ * Writes a WARN level message to the log.
  */
 #define PLOG_WARN(...) \
         plog_write(PLOG_LEVEL_WARN,  __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /**
- * Writes a ERROR level entry to the log.
+ * Writes a ERROR level message to the log.
  */
 #define PLOG_ERROR(...) \
         plog_write(PLOG_LEVEL_ERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /**
- * Writes a FATAL level entry to the log.
+ * Writes a FATAL level message to the log.
  */
 #define PLOG_FATAL(...) \
         plog_write(PLOG_LEVEL_FATAL, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /**
  * Appender function definition. An appender writes a log entry to an output
- * stream.
+ * stream. This could be the console, a file, a network connection, etc...
  */
 typedef void (*plog_appender_t)(const char* p_entry, void* p_user_data);
 
 /**
  * Identifies a registered appender.
  */
-typedef size_t plog_appender_id_t;
+typedef size_t plog_id_t;
 
 /**
  * Registers (adds appender to logger) and enables the specified appender.
@@ -111,38 +111,38 @@ typedef size_t plog_appender_id_t;
  * @param appender    The appender function to register.
  * @param p_user_data A pointer supplied to the appender function when writing
  *                    a log entry. This pointer is not modified by the logger.
- *                    If not required pass in NULL for this parameter.
- * @param id          An identifier for the logger. If not required pass in NULL
- *                    for this parameter.
+ *                    If not required, pass in NULL for this parameter.
+ * @param id          An identifier for the appender. If not required, pass in
+ *                    NULL for this parameter.
  */
 void plog_appender_register(plog_appender_t appender,
                             void* p_user_data,
-                            plog_appender_id_t* id);
+                            plog_id_t* id);
 
 /**
  * Unregisters appender (removes the appender from the logger)
  *
  * @param id The appender to unreqister.
  */
-void plog_appender_unregister(plog_appender_id_t id);
+void plog_appender_unregister(plog_id_t id);
 
 /**
  * Enables the specified appender. NOTE: Appenders are enabled by default after
  * registration.
  *
- * @param id The logger to enable.
+ * @param id The appender to enable.
  */
-void plog_appender_enable(plog_appender_id_t id);
+void plog_appender_enable(plog_id_t id);
 
 /**
  * Disables the specified appender.
  *
- * @param id The logger to disable.
+ * @param id The appender to disable.
  */
-void plog_appender_disable(plog_appender_id_t id);
+void plog_appender_disable(plog_id_t id);
 
 /**
- * Enables logging. Note: Logging is enabled by default.
+ * Enables logging. NOTE: Logging is enabled by default.
  */
 void plog_enable();
 
@@ -200,11 +200,11 @@ void plog_report_func_on();
 void plog_report_func_off();
 
 /**
- * Formats and sends a log entry to registered appenders. This function is
+ * Formats and sends a log entry to the registered appenders. This function is
  * conditionally thread-safe (provided that the appenders ARE thread-safe) in
  * the sense that it does not write to shared memory. It is, however,
  * susceptible to races conditions in that the order of log entries is
- * ultimately determined by the timing differencs of the individual threads.
+ * ultimately determined by the timing differences of the individual threads.
  *
  * NOTE: It is inadvisable to call this function directly. Use the macros
  * instead.

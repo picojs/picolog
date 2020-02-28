@@ -24,7 +24,7 @@ void log_all()
 
 int main(int argc, char** argv)
 {
-    plog_appender_id_t id1, id2;
+    plog_id_t id1, id2;
 
     plog_appender_register(appender1, NULL, &id1);
     plog_appender_register(appender2, NULL, &id2);
@@ -68,8 +68,6 @@ int main(int argc, char** argv)
 
     plog_report_func_on();
     log_all();
-
-
 
 
     return 0;

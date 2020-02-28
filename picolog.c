@@ -83,6 +83,7 @@ typedef struct
     bool            b_enabled;
 } appender_info_t;
 
+// Array of appenders
 static appender_info_t gp_appenders[PLOG_MAX_APPENDERS];
 
 /*
@@ -111,7 +112,7 @@ try_init ()
 void
 plog_appender_register (plog_appender_t appender,
                         void* user_data,
-                        plog_appender_id_t* id)
+                        plog_id_t* id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -146,7 +147,7 @@ plog_appender_register (plog_appender_t appender,
 }
 
 void
-plog_appender_unregister (plog_appender_id_t id)
+plog_appender_unregister (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -166,7 +167,7 @@ plog_appender_unregister (plog_appender_id_t id)
 }
 
 void
-plog_appender_enable (plog_appender_id_t id)
+plog_appender_enable (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -182,7 +183,7 @@ plog_appender_enable (plog_appender_id_t id)
 }
 
 void
-plog_appender_disable (plog_appender_id_t id)
+plog_appender_disable (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -278,7 +279,8 @@ time_str(char* p_str, size_t len)
 }
 
 void
-plog_write (plog_level_t level, const char* file, unsigned line, const char* func, const char* p_fmt, ...)
+plog_write (plog_level_t level, const char* file, unsigned line,
+                                const char* func, const char* p_fmt, ...)
 {
     // Only write entry if there are registered appenders and the logger is
     // enabled
@@ -290,8 +292,8 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
     // Ensure valid log level
     PLOG_ASSERT(level < PLOG_LEVEL_COUNT);
 
-    // Only write entry if the current logger level is less than or equal to the
-    // specified level
+    // Only write the log entry if the current logger level is less than or
+    // equal to the specified level
     if (g_log_level > level)
     {
         return;
@@ -305,7 +307,9 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
     {
         char p_time_str[g_timestamp_len];
         char p_tmp_str[g_timestamp_len];
-        snprintf(p_time_str, sizeof(p_time_str), "[%s] ", time_str(p_tmp_str, sizeof(p_tmp_str)));
+        snprintf(p_time_str, sizeof(p_time_str), "[%s] ",
+                 time_str(p_tmp_str, sizeof(p_tmp_str)));
+
         strncat(p_entry_str, p_time_str, sizeof(p_entry_str));
     }
 
@@ -343,7 +347,7 @@ plog_write (plog_level_t level, const char* file, unsigned line, const char* fun
 
     strncat(p_entry_str, p_msg_str, sizeof(p_entry_str));
 
-    // Send the finished entry to all enabled loggers
+    // Send the finished entry to all enabled appenders
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
         if (gp_appenders[i].b_enabled)
