@@ -61,6 +61,71 @@ typedef enum
 } plog_level_t;
 
 /**
+ * Appender function definition. An appender writes a log entry to an output
+ * stream. This could be the console, a file, a network connection, etc...
+ */
+typedef void (*plog_appender_t)(const char* p_entry, void* p_user_data);
+
+/**
+ * Identifies a registered appender.
+ */
+typedef size_t plog_id_t;
+
+/**
+ * Enables logging. NOTE: Logging is enabled by default.
+ */
+void plog_enable();
+
+/**
+ * Disables logging.
+ */
+void plog_disable();
+
+/**
+ * Registers (adds appender to logger) and enables the specified appender.
+ *
+ * @param p_appender  Pointer to the appender function to register
+ * @param p_user_data A pointer supplied to the appender function when writing
+ *                    a log entry. This pointer is not modified by the logger.
+ *                    If not required, pass in NULL for this parameter.
+ * @param p_id        A pointer to the appender identifier (set by function).
+                      If not required, pass in NULL for this parameter
+ */
+void plog_appender_register(plog_appender_t p_appender,
+                            void* p_user_data,
+                            plog_id_t* p_id);
+
+/**
+ * Unregisters appender (removes the appender from the logger).
+ *
+ * @param id The appender to unreqister
+ */
+void plog_appender_unregister(plog_id_t id);
+
+/**
+ * Enables the specified appender. NOTE: Appenders are enabled by default after
+ * registration.
+ *
+ * @param id The appender to enable.
+ */
+void plog_appender_enable(plog_id_t id);
+
+/**
+ * Disables the specified appender.
+ *
+ * @param id The appender to disable
+ */
+void plog_appender_disable(plog_id_t id);
+
+/**
+ * Sets the logging level. Only those messages of equal or higher priority
+ * (severity) than this value will be logged.
+ *
+ * @param level The new global logging threshold.
+ */
+void plog_set_level(plog_level_t level);
+
+/**
  * Writes a TRACE level message to the log. Usage is similar to printf (i.e.
  * PLOG_TRACE(format, args...))
  */
@@ -101,71 +166,6 @@ typedef enum
  */
 #define PLOG_FATAL(...) \
         plog_write(PLOG_LEVEL_FATAL, __FILE__, __LINE__, __func__, __VA_ARGS__)
-
-/**
- * Appender function definition. An appender writes a log entry to an output
- * stream. This could be the console, a file, a network connection, etc...
- */
-typedef void (*plog_appender_t)(const char* p_entry, void* p_user_data);
-
-/**
- * Identifies a registered appender.
- */
-typedef size_t plog_id_t;
-
-/**
- * Registers (adds appender to logger) and enables the specified appender.
- *
- * @param p_appender  Pointer to the appender function to register
- * @param p_user_data A pointer supplied to the appender function when writing
- *                    a log entry. This pointer is not modified by the logger.
- *                    If not required, pass in NULL for this parameter.
- * @param p_id        A pointer to the appender identifier (set by function).
-                      If not required, pass in NULL for this parameter
- */
-void plog_appender_register(plog_appender_t p_appender,
-                            void* p_user_data,
-                            plog_id_t* p_id);
-
-/**
- * Unregisters appender (removes the appender from the logger).
- *
- * @param id The appender to unreqister
- */
-void plog_appender_unregister(plog_id_t id);
-
-/**
- * Enables the specified appender. NOTE: Appenders are enabled by default after
- * registration.
- *
- * @param id The appender to enable.
- */
-void plog_appender_enable(plog_id_t id);
-
-/**
- * Disables the specified appender.
- *
- * @param id The appender to disable
- */
-void plog_appender_disable(plog_id_t id);
-
-/**
- * Enables logging. NOTE: Logging is enabled by default.
- */
-void plog_enable();
-
-/**
- * Disables logging.
- */
-void plog_disable();
-
-/**
- * Sets the logging level. Only those messages of equal or higher priority
- * (severity) than this value will be logged.
- *
- * @param level The new global logging threshold.
- */
-void plog_set_level(plog_level_t level);
 
 /**
  * Turns timestamp reporting on. NOTE: Off by default.

@@ -110,6 +110,18 @@ try_init ()
 }
 
 void
+plog_enable()
+{
+    gb_enabled = true;
+}
+
+void
+plog_disable()
+{
+    gb_enabled = false;
+}
+
+void
 plog_appender_register (plog_appender_t p_appender,
                         void* p_user_data,
                         plog_id_t* p_id)
@@ -196,18 +208,6 @@ plog_appender_disable (plog_id_t id)
 
     // Disable appender
     gp_appenders[id].b_enabled = false;
-}
-
-void
-plog_enable()
-{
-    gb_enabled = true;
-}
-
-void
-plog_disable()
-{
-    gb_enabled = false;
 }
 
 void

@@ -18,9 +18,54 @@ Features:
 API:
 --------
 
-#### void `my_appender`(const char* `p_entry`, void* `p_user_data`);
+#### plog_enable()
+
+Enables logging. NOTE: Logging is enabled by default.
+
+#### plog_disable()
+
+Disables logging.
+
+##### void `my_appender`(const char* `p_entry`, void* `p_user_data`);
 
 Signature for appender function. An appender could write to the console, a file, over a network or any other form of output stream.
+
+#### plog_appender_register(p_appender, p_user_data, p_id)
+
+Registers (adds appender to logger) and enables the specified appender.
+
+- `p_appender`  - Pointer to the appender function to register
+- `p_user_data` - A pointer supplied to the appender function when writing a log
+                  entry. This pointer is not modified by the logger. If not
+                  required, pass in NULL for this parameter
+- `p_id`        - A pointer to the appender identifier (set by function). If not
+                  required, pass in NULL for this parameter
+
+#### plog_appender_unregister(id)
+
+Unregisters appender (removes the appender from the logger).
+
+- `id` - The appender to unreqister
+
+#### plog_appender_enable(id)
+
+Enables the specified appender. NOTE: Appenders are enabled by default after
+registration.
+
+- `id` - The appender to enable
+
+#### plog_appender_disable(id)
+
+Disables the specified appender.
+
+- `id` - The appender to disable
+
+#### plog_set_level(level)
+
+Sets the logging level. Only those messages of equal or higher priority
+(severity) than this value will be logged.
+
+- `level` - The new global logging threshold.
 
 #### PLOG_TRACE(fmt, args...)
 
@@ -69,51 +114,6 @@ printf.
 
 - `fmt`     - Message format
 - `args...` - Format specifiers
-
-#### plog_appender_register(p_appender, p_user_data, p_id)
-
-Registers (adds appender to logger) and enables the specified appender.
-
-- `p_appender`  - Pointer to the appender function to register
-- `p_user_data` - A pointer supplied to the appender function when writing a log
-                  entry. This pointer is not modified by the logger. If not
-                  required, pass in NULL for this parameter
-- `p_id`        - A pointer to the appender identifier (set by function). If not
-                  required, pass in NULL for this parameter
-
-#### plog_appender_unregister(id)
-
-Unregisters appender (removes the appender from the logger).
-
-- `id` - The appender to unreqister
-
-#### plog_appender_enable(id)
-
-Enables the specified appender. NOTE: Appenders are enabled by default after
-registration.
-
-- `id` - The appender to enable
-
-#### plog_appender_disable(id)
-
-Disables the specified appender.
-
-- `id` - The appender to disable
-
-#### plog_enable()
-
-Enables logging. NOTE: Logging is enabled by default.
-
-#### plog_disable()
-
-Disables logging.
-
-#### plog_set_level(level)
-
-Sets the logging level. Only those messages of equal or higher priority
-(severity) than this value will be logged.
-
-- `level` - The new global logging threshold.
 
 #### plog_turn_timestamp_on()
 
