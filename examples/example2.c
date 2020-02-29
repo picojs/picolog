@@ -29,7 +29,6 @@ int main(int argc, char** argv)
     plog_appender_register(appender1, NULL, &id1);
     plog_appender_register(appender2, NULL, &id2);
 
-
     plog_set_level(PLOG_LEVEL_TRACE);
 
     printf("================== Both appenders ==================\n");
@@ -59,12 +58,10 @@ int main(int argc, char** argv)
 
     printf("================== File ==================\n");
 
-
     plog_turn_file_on();
     log_all();
 
     printf("================== Func ==================\n");
-
 
     plog_turn_func_on();
     log_all();

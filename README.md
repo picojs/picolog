@@ -147,6 +147,47 @@ Turns function name reporting on. NOTE: Off by default.
 
 Turns function name reporting off.
 
+Example:
+--------
+
+```C
+#include <stdio.h>
+
+#include "../picolog.h"
+
+void appender(const char* p_msg, void* p_user_data)
+{
+    printf("%s\n", p_msg);
+}
+
+int main(int argc, char** argv)
+{
+    plog_appender_register(appender, NULL, NULL);
+
+    plog_turn_timestamp_on();
+    plog_turn_file_on();
+    plog_turn_func_on();
+
+    PLOG_TRACE ("Test message: %d", 0);
+    PLOG_DEBUG ("Test message: %d", 1);
+    PLOG_INFO  ("Test message: %d", 2);
+    PLOG_WARN  ("Test message: %d", 3);
+    PLOG_ERROR ("Test message: %d", 4);
+    PLOG_FATAL ("Test message: %d", 5);
+
+    return 0;
+}
+```
+
+Output:
+--------
+
+>[29/02/20 14:35:42] [DEBUG] [example1.c:19] [main] Test message: 1
+>[29/02/20 14:35:42] [INFO] [example1.c:20] [main] Test message: 2
+>[29/02/20 14:35:42] [WARN] [example1.c:21] [main] Test message: 3
+>[29/02/20 14:35:42] [ERROR] [example1.c:22] [main] Test message: 4
+>[29/02/20 14:35:42] [FATAL] [example1.c:23] [main] Test message: 5
+
 ## License
 Copyright (c) 2020 James McLean.
 Licensed under the MIT license.
