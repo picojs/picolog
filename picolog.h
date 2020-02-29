@@ -1,7 +1,5 @@
 /** @file picolog.h
- * picolog is a minimal, yet flexible logging framework written in C99. Due to
- * its small footprint, it is suitable for embedded as well as general
- * software development.
+ * picolog is a minimal, yet flexible logging framework written in C99.
  */
 
 /*=============================================================================
@@ -36,6 +34,10 @@
 #include <stdbool.h> /* bool, true, false */
 #include <stddef.h>  /* NULL, size_t */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * Configuration constants/macros.
  */
@@ -59,37 +61,43 @@ typedef enum
 } plog_level_t;
 
 /**
- * Writes a TRACE level message to the log.
+ * Writes a TRACE level message to the log. Usage is similar to printf (i.e.
+ * PLOG_TRACE(format, args...))
  */
 #define PLOG_TRACE(...) \
         plog_write(PLOG_LEVEL_TRACE, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /**
- * Writes a DEBUG level message to the log.
+ * Writes a DEBUG level message to the log. Usage is similar to printf (i.e.
+ * PLOG_DEBUG(format, args...))
  */
 #define PLOG_DEBUG(...) \
         plog_write(PLOG_LEVEL_DEBUG, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /**
- * Writes an INFO level message to the log.
+ * Writes an INFO level message to the log. Usage is similar to printf (i.e.
+ * PLOG_INFO(format, args...))
  */
 #define PLOG_INFO(...) \
         plog_write(PLOG_LEVEL_INFO,  __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /**
- * Writes a WARN level message to the log.
+ * Writes a WARN level message to the log. Usage is similar to printf (i.e.
+ * PLOG_WARN(format, args...))
  */
 #define PLOG_WARN(...) \
         plog_write(PLOG_LEVEL_WARN,  __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /**
- * Writes a ERROR level message to the log.
+ * Writes a ERROR level message to the log. Usage is similar to printf (i.e.
+ * PLOG_ERROR(format, args...))
  */
 #define PLOG_ERROR(...) \
         plog_write(PLOG_LEVEL_ERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /**
- * Writes a FATAL level message to the log.
+ * Writes a FATAL level message to the log.. Usage is similar to printf (i.e.
+ * PLOG_FATAL(format, args...))
  */
 #define PLOG_FATAL(...) \
         plog_write(PLOG_LEVEL_FATAL, __FILE__, __LINE__, __func__, __VA_ARGS__)
@@ -203,7 +211,7 @@ void plog_turn_func_off();
  * Formats and sends a log entry to the registered appenders. This function is
  * conditionally thread-safe (provided that the appenders ARE thread-safe) in
  * the sense that it does not write to shared memory. It is, however,
- * susceptible to races conditions in that the order of log entries is
+ * susceptible to race conditions in that the order of log entries is
  * ultimately determined by the timing differences of the individual threads.
  *
  * NOTE: It is inadvisable to call this function directly. Use the macros
@@ -215,6 +223,10 @@ void plog_write(plog_level_t level,
                 const char* func,
                 const char* p_fmt, ...);
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* PICOLOG_H */
 
