@@ -10,12 +10,17 @@ Features:
 - Only two files (header/source) for easy integration into any build system
 - Tiny memory and code footprint
 - Simple and minimalistic API
+- Flexible and extensible appender handling
 - Ability to set logging level (TRACE, DEBUG, INFO, WARN, ERROR, and FATAL)
 - Ability to toggle date/time, level, filename/line, and function reporting
 - MIT licensed
 
 API:
 --------
+
+#### void `my_appender`(const char* `p_entry`, void* `p_user_data`);
+
+Signature for appender function. An appender could write to the console, a file, over a network or any other form of output stream.
 
 #### PLOG_TRACE(fmt, args...)
 
