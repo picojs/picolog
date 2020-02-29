@@ -182,12 +182,12 @@ int main(int argc, char** argv)
 Output:
 --------
 
->[29/02/20 14:35:42] [DEBUG] [example1.c:19] [main] Test message: 1
->[29/02/20 14:35:42] [INFO] [example1.c:20] [main] Test message: 2
->[29/02/20 14:35:42] [WARN] [example1.c:21] [main] Test message: 3
->[29/02/20 14:35:42] [ERROR] [example1.c:22] [main] Test message: 4
+>[29/02/20 14:35:42] [DEBUG] [example1.c:19] [main] Test message: 1<br/>
+>[29/02/20 14:35:42] [INFO] [example1.c:20] [main] Test message: 2<br/>
+>[29/02/20 14:35:42] [WARN] [example1.c:21] [main] Test message: 3<br/>
+>[29/02/20 14:35:42] [ERROR] [example1.c:22] [main] Test message: 4<br/>
 >[29/02/20 14:35:42] [FATAL] [example1.c:23] [main] Test message: 5
 
 ## License
-Copyright (c) 2020 James McLean.
+Copyright (c) 2020 James McLean.<br/>
 Licensed under the MIT license.
