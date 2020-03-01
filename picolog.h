@@ -29,10 +29,10 @@
 #ifndef PICOLOG_H
 #define PICOLOG_H
 
-#include <assert.h>  /* assert */
-#include <stdarg.h>  /* ... */
-#include <stdbool.h> /* bool, true, false */
-#include <stddef.h>  /* NULL, size_t */
+#include <assert.h>  // assert
+#include <stdarg.h>  // ...
+#include <stdbool.h> // bool, true, false
+#include <stddef.h>  // NULL, size_t
 
 #ifdef __cplusplus
 extern "C" {
@@ -72,7 +72,7 @@ typedef void (*plog_appender_t)(const char* p_entry, void* p_user_data);
 typedef size_t plog_id_t;
 
 /**
- * Enables logging. **NOTE:** Logging is enabled by default.
+ * Enables logging. NOTE: Logging is enabled by default.
  */
 void plog_enable();
 
@@ -82,9 +82,14 @@ void plog_enable();
 void plog_disable();
 
 /**
- * Registers (adds appender to logger) and enables the specified appender.
+ * Registers (adds appender to logger) and enables the specified appender. An
+ * appender writes a log entry to an output stream. This could be a console,
+ * a file, a network connection, etc...
  *
- * @param p_appender  Pointer to the appender function to register
+ * @param p_appender  Pointer to the appender function to register. An appender
+ *                    function has the signature,
+ *                    `void appender_func(const char* p_entry, void* p_user_data)`
+
  * @param p_user_data A pointer supplied to the appender function when writing
  *                    a log entry. This pointer is not modified by the logger.
  *                    If not required, pass in NULL for this parameter.
@@ -102,7 +107,7 @@ plog_id_t plog_appender_register(plog_appender_t p_appender, void* p_user_data);
 void plog_appender_unregister(plog_id_t id);
 
 /**
- * Enables the specified appender. **NOTE:** Appenders are enabled by default
+ * Enables the specified appender. NOTE: Appenders are enabled by default
  * after registration.
  *
  * @param id The appender to enable.
@@ -167,7 +172,7 @@ void plog_set_level(plog_level_t level);
         plog_write(PLOG_LEVEL_FATAL, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /**
- * Turns timestamp reporting on. **NOTE:** Off by default.
+ * Turns timestamp reporting on. NOTE: Off by default.
  */
 void plog_turn_timestamp_on();
 
@@ -177,7 +182,7 @@ void plog_turn_timestamp_on();
 void plog_turn_timestamp_off();
 
 /**
- * Turns log level reporting on. **NOTE:** On by default.
+ * Turns log level reporting on. NOTE: On by default.
  */
 void plog_turn_level_on();
 
@@ -187,7 +192,7 @@ void plog_turn_level_on();
 void plog_turn_level_off();
 
 /**
- * Turns filename/line number reporting on. **NOTE:** Off by default.
+ * Turns filename/line number reporting on. NOTE: Off by default.
  */
 void plog_turn_file_on();
 
@@ -197,7 +202,7 @@ void plog_turn_file_on();
 void plog_turn_file_off();
 
 /**
- * Turns function name reporting on. **NOTE:** Off by default.
+ * Turns function name reporting on. NOTE: Off by default.
  */
 void plog_turn_func_on();
 
@@ -207,11 +212,12 @@ void plog_turn_func_on();
 void plog_turn_func_off();
 
 /**
- * Formats and sends a log entry to the registered appenders. This function is
- * conditionally thread-safe (provided that the appenders ARE thread-safe) in
- * the sense that it does not write to shared memory. It is, however,
- * susceptible to race conditions in that the order of log entries is
- * ultimately determined by the timing differences of the individual threads.
+ * Formats and sends a log entry to the enabled appenders. This function is
+ * conditionally thread-safe in the sense that it does not write to shared
+ * memory. This condition only holds if the appenders are themselves
+ * (unconditionally) thread-safe. It is, however, susceptible to race conditions
+ * in that the order of log entries is ultimately determined by the timing
+ * differences of the individual threads.
  *
  * **WARN:** It is inadvisable to call this function directly. Use the macros
  * instead.

@@ -28,10 +28,10 @@
 
 #include "picolog.h"
 
-#include <stdarg.h>  /* va_list, va_start, va_end */
-#include <stdio.h>   /* vsnprintf */
-#include <string.h>  /* strncat */
-#include <time.h>    /* time, strftime */
+#include <stdarg.h> // va_list, va_start, va_end
+#include <stdio.h>  // vsnprintf
+#include <string.h> // strncat
+#include <time.h>   // time, strftime
 
 /*
  * Log entry component maximum sizes. These have been chosen to be overly
@@ -83,7 +83,9 @@ typedef struct
     bool            b_enabled;
 } appender_info_t;
 
-// Array of appenders
+/*
+ * Array of appenders.
+ */
 static appender_info_t gp_appenders[PLOG_MAX_APPENDERS];
 
 /*
@@ -97,7 +99,7 @@ try_init ()
         return;
     }
 
-    g_log_level = PLOG_LEVEL_DEBUG; // Default logger level is DEBUG
+    g_log_level = PLOG_LEVEL_INFO; // Default logger level is INFO
 
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {

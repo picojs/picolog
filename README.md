@@ -20,24 +20,26 @@ API:
 
 #### plog_enable()
 
-Enables logging. NOTE: Logging is enabled by default.
+Enables logging. **NOTE:** Logging is enabled by default.
 
 #### plog_disable()
 
 Disables logging.
 
-##### void `my_appender`(const char* `p_entry`, void* `p_user_data`);
-
-Signature for appender function. An appender could write to the console, a file, over a network or any other form of output stream.
-
 #### plog_appender_register(p_appender, p_user_data, p_id)
 
-Registers (adds appender to logger) and enables the specified appender.
+Registers (adds appender to logger) and enables the specified appender. An
+appender writes a log entry to an output stream. This could be a console,
+a file, a network connection, etc...
 
-- `p_appender`  - Pointer to the appender function to register
+- `p_appender`  - Pointer to the appender function to register. An appender
+ *                function has the signature,
+ *                `void appender_func(const char* p_entry, void* p_user_data)`
+
 - `p_user_data` - A pointer supplied to the appender function when writing a log
                   entry. This pointer is not modified by the logger. If not
                   required, pass in NULL for this parameter<br/>
+
 **returns**       An identifier for the appender. This ID is valid until the
                   appender is unregistered.
 
@@ -49,7 +51,7 @@ Unregisters appender (removes the appender from the logger).
 
 #### plog_appender_enable(id)
 
-Enables the specified appender. NOTE: Appenders are enabled by default after
+Enables the specified appender. **NOTE:** Appenders are enabled by default after
 registration.
 
 - `id` - The appender to enable
@@ -117,7 +119,7 @@ printf.
 
 #### plog_turn_timestamp_on()
 
-Turns timestamp reporting on. NOTE: Off by default.
+Turns timestamp reporting on. **NOTE:** Off by default.
 
 #### plog_turn_timestamp_off()
 
@@ -125,7 +127,7 @@ Turns timestamp reporting off.
 
 #### plog_turn_level_on()
 
-Turns log level reporting on. NOTE: On by default.
+Turns log level reporting on. **NOTE:** On by default.
 
 #### plog_turn_level_off()
 
@@ -133,7 +135,7 @@ Turns log level reporting off
 
 #### plog_turn_file_on()
 
-Turns filename/line number reporting on. NOTE: Off by default.
+Turns filename/line number reporting on. **NOTE:** Off by default.
 
 #### plog_turn_file_off()
 
@@ -141,7 +143,7 @@ Turns filename/line number reporting off.
 
 #### plog_turn_func_on()
 
-Turns function name reporting on. NOTE: Off by default.
+Turns function name reporting on. **NOTE:** Off by default.
 
 #### plog_turn_func_off()
 
@@ -168,6 +170,8 @@ int main(int argc, char** argv)
     plog_turn_file_on();
     plog_turn_func_on();
 
+    // Default log level is INFO
+
     PLOG_TRACE ("Test message: %d", 0);
     PLOG_DEBUG ("Test message: %d", 1);
     PLOG_INFO  ("Test message: %d", 2);
@@ -182,12 +186,11 @@ int main(int argc, char** argv)
 Output:
 --------
 
->[29/02/20 14:35:42] [DEBUG] [example1.c:19] [main] Test message: 1<br/>
 >[29/02/20 14:35:42] [INFO] [example1.c:20] [main] Test message: 2<br/>
 >[29/02/20 14:35:42] [WARN] [example1.c:21] [main] Test message: 3<br/>
 >[29/02/20 14:35:42] [ERROR] [example1.c:22] [main] Test message: 4<br/>
 >[29/02/20 14:35:42] [FATAL] [example1.c:23] [main] Test message: 5
 
 ## License
-Copyright (c) 2020 James McLean.<br/>
-Licensed under the MIT license.
+Copyright (c) 2020 James McLean<br/>
+Licensed under the MIT license
