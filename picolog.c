@@ -110,13 +110,13 @@ try_init ()
 }
 
 void
-plog_enable()
+plog_enable ()
 {
     gb_enabled = true;
 }
 
 void
-plog_disable()
+plog_disable ()
 {
     gb_enabled = false;
 }
@@ -263,7 +263,7 @@ plog_turn_func_off ()
  * Formats the current time as as string.
  */
 static char*
-time_str(char* p_str, size_t len)
+time_str (char* p_str, size_t len)
 {
     time_t now = time(0);
     strftime(p_str, len, "%d/%m/%g %H:%M:%S", localtime(&now));

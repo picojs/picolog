@@ -72,7 +72,7 @@ typedef void (*plog_appender_t)(const char* p_entry, void* p_user_data);
 typedef size_t plog_id_t;
 
 /**
- * Enables logging. NOTE: Logging is enabled by default.
+ * Enables logging. **NOTE:** Logging is enabled by default.
  */
 void plog_enable();
 
@@ -88,7 +88,9 @@ void plog_disable();
  * @param p_user_data A pointer supplied to the appender function when writing
  *                    a log entry. This pointer is not modified by the logger.
  *                    If not required, pass in NULL for this parameter.
- * @return            An identifier for the appender
+ *
+ * @return            An identifier for the appender. This ID is valid until the
+ *                    appender is unregistered.
  */
 plog_id_t plog_appender_register(plog_appender_t p_appender, void* p_user_data);
 
@@ -100,8 +102,8 @@ plog_id_t plog_appender_register(plog_appender_t p_appender, void* p_user_data);
 void plog_appender_unregister(plog_id_t id);
 
 /**
- * Enables the specified appender. NOTE: Appenders are enabled by default after
- * registration.
+ * Enables the specified appender. **NOTE:** Appenders are enabled by default
+ * after registration.
  *
  * @param id The appender to enable.
  */
@@ -165,7 +167,7 @@ void plog_set_level(plog_level_t level);
         plog_write(PLOG_LEVEL_FATAL, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /**
- * Turns timestamp reporting on. NOTE: Off by default.
+ * Turns timestamp reporting on. **NOTE:** Off by default.
  */
 void plog_turn_timestamp_on();
 
@@ -175,7 +177,7 @@ void plog_turn_timestamp_on();
 void plog_turn_timestamp_off();
 
 /**
- * Turns log level reporting on. NOTE: On by default.
+ * Turns log level reporting on. **NOTE:** On by default.
  */
 void plog_turn_level_on();
 
@@ -185,7 +187,7 @@ void plog_turn_level_on();
 void plog_turn_level_off();
 
 /**
- * Turns filename/line number reporting on. NOTE: Off by default.
+ * Turns filename/line number reporting on. **NOTE:** Off by default.
  */
 void plog_turn_file_on();
 
@@ -195,7 +197,7 @@ void plog_turn_file_on();
 void plog_turn_file_off();
 
 /**
- * Turns function name reporting on. NOTE: Off by default.
+ * Turns function name reporting on. **NOTE:** Off by default.
  */
 void plog_turn_func_on();
 
@@ -211,7 +213,7 @@ void plog_turn_func_off();
  * susceptible to race conditions in that the order of log entries is
  * ultimately determined by the timing differences of the individual threads.
  *
- * NOTE: It is inadvisable to call this function directly. Use the macros
+ * **WARN:** It is inadvisable to call this function directly. Use the macros
  * instead.
  */
 void plog_write(plog_level_t level,
