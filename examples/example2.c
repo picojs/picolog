@@ -24,10 +24,9 @@ void log_all()
 
 int main(int argc, char** argv)
 {
-    plog_id_t id1, id2;
+    plog_appender_register(appender1, NULL);
 
-    plog_appender_register(appender1, NULL, &id1);
-    plog_appender_register(appender2, NULL, &id2);
+    plog_id_t id = plog_appender_register(appender2, NULL);
 
     plog_set_level(PLOG_LEVEL_TRACE);
 
@@ -37,7 +36,7 @@ int main(int argc, char** argv)
 
     printf("================== One appender ==================\n");
 
-    plog_appender_disable(id2);
+    plog_appender_disable(id);
     log_all();
 
     printf("================== Level Off ==================\n");
@@ -65,7 +64,6 @@ int main(int argc, char** argv)
 
     plog_turn_func_on();
     log_all();
-
 
     return 0;
 }

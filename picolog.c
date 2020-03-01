@@ -121,10 +121,8 @@ plog_disable()
     gb_enabled = false;
 }
 
-void
-plog_appender_register (plog_appender_t p_appender,
-                        void* p_user_data,
-                        plog_id_t* p_id)
+plog_id_t
+plog_appender_register (plog_appender_t p_appender, void* p_user_data)
 {
     // Initialize logger if neccesary
     try_init();
@@ -142,15 +140,9 @@ plog_appender_register (plog_appender_t p_appender,
             gp_appenders[i].p_user_data = p_user_data;
             gp_appenders[i].b_enabled   = true;
 
-            // Store appender ID (if requested)
-            if (NULL != p_id)
-            {
-                *p_id = i;
-            }
-
             g_appender_count++;
 
-            return;
+            return i;
         }
     }
 

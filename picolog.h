@@ -88,12 +88,9 @@ void plog_disable();
  * @param p_user_data A pointer supplied to the appender function when writing
  *                    a log entry. This pointer is not modified by the logger.
  *                    If not required, pass in NULL for this parameter.
- * @param p_id        A pointer to the appender identifier (set by function).
-                      If not required, pass in NULL for this parameter
+ * @return            An identifier for the appender
  */
-void plog_appender_register(plog_appender_t p_appender,
-                            void* p_user_data,
-                            plog_id_t* p_id);
+plog_id_t plog_appender_register(plog_appender_t p_appender, void* p_user_data);
 
 /**
  * Unregisters appender (removes the appender from the logger).
