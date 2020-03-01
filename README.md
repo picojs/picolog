@@ -37,9 +37,9 @@ Registers (adds appender to logger) and enables the specified appender.
 - `p_appender`  - Pointer to the appender function to register
 - `p_user_data` - A pointer supplied to the appender function when writing a log
                   entry. This pointer is not modified by the logger. If not
-                  required, pass in NULL for this parameter
-- `p_id`        - A pointer to the appender identifier (set by function). If not
-                  required, pass in NULL for this parameter
+                  required, pass in NULL for this parameter<br/>
+**returns**       An identifier for the appender. This ID is valid until the
+                  appender is unregistered.
 
 #### plog_appender_unregister(id)
 
