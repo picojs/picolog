@@ -87,7 +87,7 @@ printf.
 
 #### PLOG_INFO(fmt, args...)
 
-Writes a INFO( level message to the log. This macro behaves identically to
+Writes a INFO level message to the log. This macro behaves identically to
 printf.
 
 - `fmt`     - Message format
