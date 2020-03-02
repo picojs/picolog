@@ -33,8 +33,8 @@ appender writes a log entry to an output stream. This could be a console,
 a file, a network connection, etc...
 
 - `p_appender`  - Pointer to the appender function to register. An appender
- *                function has the signature,
- *                `void appender_func(const char* p_entry, void* p_user_data)`
+                  function has the signature,
+                  `void appender_func(const char* p_entry, void* p_user_data)`
 
 - `p_user_data` - A pointer supplied to the appender function when writing a log
                   entry. This pointer is not modified by the logger. If not
