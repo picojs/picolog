@@ -37,17 +37,17 @@
  * Log entry component maximum sizes. These have been chosen to be overly
  * generous powers of 2 for the sake of safety and simplicity.
  */
-const size_t g_timestamp_len = 32;
-const size_t g_level_len     = 16;
-const size_t g_file_len      = 64;
-const size_t g_func_len      = 32;
-const size_t g_msg_len       = PLOG_MAX_MSG_LENGTH;
-const size_t g_entry_len     = g_timestamp_len +
-                               g_level_len     +
-                               g_file_len      +
-                               g_func_len      +
-                               g_msg_len;
 
+#define PLOG_TIMESTAMP_LEN 32
+#define PLOG_LEVEL_LEN     16
+#define PLOG_FILE_LEN      64
+#define PLOG_FUNC_LEN      32
+#define PLOG_MSG_LEN       PLOG_MAX_MSG_LENGTH
+#define PLOG_ENTRY_LEN    (PLOG_TIMESTAMP_LEN + \
+                           PLOG_LEVEL_LEN     + \
+                           PLOG_FILE_LEN      + \
+                           PLOG_FUNC_LEN      + \
+                           PLOG_MSG_LEN)
 
 static bool         gb_initialized   = false; // True if logger is initialized
 static bool         gb_enabled       = true;  // True if logger is enabled
@@ -62,7 +62,7 @@ static size_t g_appender_count = 0; // Number of registered appenders
 /*
  * Logger level strings indexed by level ID (plog_level_t).
  */
-const char* const level_str[] =
+static const char* const level_str[] =
 {
     "TRACE",
     "DEBUG",
@@ -144,7 +144,7 @@ plog_appender_register (plog_appender_t p_appender, void* p_user_data)
 
             g_appender_count++;
 
-            return i;
+            return (plog_id_t)i;
         }
     }
 
@@ -293,61 +293,60 @@ plog_write (plog_level_t level, const char* file, unsigned line,
         return;
     }
 
-    char p_entry_str[g_entry_len + 1]; // Ensure there is space for null char
+    char p_entry_str[PLOG_ENTRY_LEN + 1]; // Ensure there is space for null char
     p_entry_str[0] = '\0'; // Ensure the entry is null terminated
 
     // Append the timestamp
     if (gb_timestamp)
     {
-        char p_time_str[g_timestamp_len];
-        char p_tmp_str[g_timestamp_len];
+        char p_time_str[PLOG_TIMESTAMP_LEN];
+        char p_tmp_str[PLOG_TIMESTAMP_LEN];
         snprintf(p_time_str, sizeof(p_time_str), "[%s] ",
                  time_str(p_tmp_str, sizeof(p_tmp_str)));
 
-        strncat(p_entry_str, p_time_str, sizeof(p_entry_str));
+        strncat(p_entry_str, p_time_str, sizeof(p_entry_str) - 1);
     }
 
     // Append the logger level
     if (gb_level)
     {
-        char p_level_str[g_level_len];
+        char p_level_str[PLOG_LEVEL_LEN];
         snprintf(p_level_str, sizeof(p_level_str), "[%s] ", level_str[level]);
-        strncat(p_entry_str, p_level_str, sizeof(p_entry_str));
+        strncat(p_entry_str, p_level_str, sizeof(p_entry_str) - 1);
     }
 
     // Append the filename/line number
     if (gb_file)
     {
-        char p_file_str[g_file_len];
+        char p_file_str[PLOG_FILE_LEN];
         snprintf(p_file_str, sizeof(p_file_str), "[%s:%u] ", file, line);
-        strncat(p_entry_str, p_file_str, sizeof(p_entry_str));
+        strncat(p_entry_str, p_file_str, sizeof(p_entry_str) - 1);
     }
 
     // Append the function name
     if (gb_func)
     {
-        char p_func_str[g_func_len];
+        char p_func_str[PLOG_FUNC_LEN];
         snprintf(p_func_str, sizeof(p_func_str), "[%s] ", func);
-        strncat(p_entry_str, p_func_str, sizeof(p_entry_str));
+        strncat(p_entry_str, p_func_str, sizeof(p_entry_str) - 1);
     }
 
     // Append the log message
-    char p_msg_str[g_msg_len];
+    char p_msg_str[PLOG_MSG_LEN];
 
     va_list args;
     va_start(args, p_fmt);
     vsnprintf(p_msg_str, sizeof(p_msg_str), p_fmt, args);
     va_end(args);
 
-    strncat(p_entry_str, p_msg_str, sizeof(p_entry_str));
+    strncat(p_entry_str, p_msg_str, sizeof(p_entry_str) - 1);
 
     // Send the finished entry to all enabled appenders
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
         if (gp_appenders[i].b_enabled)
         {
-            gp_appenders[i].p_appender(p_entry_str,
-                                       gp_appenders[i].p_user_data);
+            gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data);
         }
     }
 }
