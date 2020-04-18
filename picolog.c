@@ -79,8 +79,9 @@ static const char* const level_str[] =
 typedef struct
 {
     plog_appender_t p_appender;
-    void*           p_user_data;
+    void*           p_userdata;
     bool            b_enabled;
+    char            padding[7];
 } appender_info_t;
 
 /*
@@ -104,11 +105,28 @@ try_init ()
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
         gp_appenders[i].p_appender  = NULL;
-        gp_appenders[i].p_user_data = NULL;
+        gp_appenders[i].p_userdata = NULL;
         gp_appenders[i].b_enabled   = false;
     }
 
     gb_initialized = true;
+}
+
+bool plog_str_level(const char* str, plog_level_t* level)
+{
+    if (!level)
+        return false;
+
+    for (size_t i = 0; level_str[i]; i++)
+    {
+        if (0 == strcmp(str, level_str[i]))
+        {
+            *level = (plog_level_t)i;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void
@@ -124,7 +142,7 @@ plog_disable ()
 }
 
 plog_id_t
-plog_appender_register (plog_appender_t p_appender, void* p_user_data)
+plog_appender_register (plog_appender_t p_appender, void* p_userdata)
 {
     // Initialize logger if neccesary
     try_init();
@@ -139,7 +157,7 @@ plog_appender_register (plog_appender_t p_appender, void* p_user_data)
         {
             // Store and enable appender
             gp_appenders[i].p_appender  = p_appender;
-            gp_appenders[i].p_user_data = p_user_data;
+            gp_appenders[i].p_userdata = p_userdata;
             gp_appenders[i].b_enabled   = true;
 
             g_appender_count++;
@@ -166,7 +184,7 @@ plog_appender_unregister (plog_id_t id)
 
     // Reset appender with given ID
     gp_appenders[id].p_appender  = NULL;
-    gp_appenders[id].p_user_data = NULL;
+    gp_appenders[id].p_userdata = NULL;
     gp_appenders[id].b_enabled   = false;
 
     g_appender_count--;
@@ -204,6 +222,35 @@ plog_appender_disable (plog_id_t id)
     gp_appenders[id].b_enabled = false;
 }
 
+bool plog_appender_enabled(plog_id_t id)
+{
+    // Initialize logger if neccesary
+    try_init();
+
+    // Ensure ID is valid
+    PLOG_ASSERT(id < PLOG_MAX_APPENDERS);
+
+    // Ensure appender is registered
+    PLOG_ASSERT(NULL != gp_appenders[id].p_appender);
+
+    return gp_appenders[id].b_enabled;
+}
+
+void plog_appender_set_userdata(plog_id_t id, void* p_userdata)
+{
+    // Initialize logger if neccesary
+    try_init();
+
+    // Ensure ID is valid
+    PLOG_ASSERT(id < PLOG_MAX_APPENDERS);
+
+    // Ensure appender is registered
+    PLOG_ASSERT(NULL != gp_appenders[id].p_appender);
+
+    gp_appenders[id].p_userdata = p_userdata;
+}
+
+
 void
 plog_set_level (plog_level_t level)
 {
@@ -238,13 +285,13 @@ plog_turn_level_off ()
 }
 
 void
-plog_turn_file_on ()
+plog_turn_filename_on ()
 {
     gb_file = true;
 }
 
 void
-plog_turn_file_off ()
+plog_turn_filename_off ()
 {
     gb_file = false;
 }
@@ -346,7 +393,7 @@ plog_write (plog_level_t level, const char* file, unsigned line,
     {
         if (gp_appenders[i].b_enabled)
         {
-            gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data);
+            gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_userdata);
         }
     }
 }

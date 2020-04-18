@@ -64,12 +64,17 @@ typedef enum
  * Appender function definition. An appender writes a log entry to an output
  * stream. This could be the console, a file, a network connection, etc...
  */
-typedef void (*plog_appender_t)(const char* p_entry, void* p_user_data);
+typedef void (*plog_appender_t)(const char* p_entry, void* p_userdata);
 
 /**
  * Identifies a registered appender.
  */
 typedef size_t plog_id_t;
+
+/**
+  * Converts a string to the corresponding log level
+  */
+bool plog_str_level(const char* str, plog_level_t* level);
 
 /**
  * Enables logging. NOTE: Logging is enabled by default.
@@ -88,16 +93,16 @@ void plog_disable();
  *
  * @param p_appender  Pointer to the appender function to register. An appender
  *                    function has the signature,
- *                    `void appender_func(const char* p_entry, void* p_user_data)`
+ *                    `void appender_func(const char* p_entry, void* p_userdata)`
 
- * @param p_user_data A pointer supplied to the appender function when writing
+ * @param p_userdata A pointer supplied to the appender function when writing
  *                    a log entry. This pointer is not modified by the logger.
  *                    If not required, pass in NULL for this parameter.
  *
  * @return            An identifier for the appender. This ID is valid until the
  *                    appender is unregistered.
  */
-plog_id_t plog_appender_register(plog_appender_t p_appender, void* p_user_data);
+plog_id_t plog_appender_register(plog_appender_t p_appender, void* p_userdata);
 
 /**
  * Unregisters appender (removes the appender from the logger).
@@ -120,6 +125,21 @@ void plog_appender_enable(plog_id_t id);
  * @param id The appender to disable
  */
 void plog_appender_disable(plog_id_t id);
+
+/**
+ * Returns true if the specified appender is enabled, and false otherwise.
+ * NOTE: Appenders are enabled by default after registration.
+ *
+ * @param id The appender to enable.
+ */
+bool plog_appender_enabled(plog_id_t id);
+
+/**
+ * Sets an appender's user data.
+ * @param id The appender
+ * @param p_userdata The user data to set.
+ */
+void plog_appender_set_userdata(plog_id_t id, void* p_userdata);
 
 /**
  * Sets the logging level. Only those messages of equal or higher priority
@@ -194,12 +214,12 @@ void plog_turn_level_off();
 /**
  * Turns filename/line number reporting on. NOTE: Off by default.
  */
-void plog_turn_file_on();
+void plog_turn_filename_on();
 
 /**
  * Turns filename/line number reporting off.
  */
-void plog_turn_file_off();
+void plog_turn_filename_off();
 
 /**
  * Turns function name reporting on. NOTE: Off by default.
