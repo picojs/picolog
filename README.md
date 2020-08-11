@@ -69,7 +69,7 @@ Sets the logging level. Only those messages of equal or higher priority
 
 - `level` - The new global logging threshold.
 
-#### PLOG_TRACE(fmt, args...)
+#### plog_trace(fmt, args...)
 
 Writes a TRACE level message to the log. This macro behaves identically to
 printf.
@@ -77,7 +77,7 @@ printf.
 - `fmt`     - Message format
 - `args...` - Format specifiers
 
-#### PLOG_DEBUG(fmt, args...)
+#### plog_debug(fmt, args...)
 
 Writes a DEBUG level message to the log. This macro behaves identically to
 printf.
@@ -85,7 +85,7 @@ printf.
 - `fmt`     - Message format
 - `args...` - Format specifiers
 
-#### PLOG_INFO(fmt, args...)
+#### plog_info(fmt, args...)
 
 Writes a INFO level message to the log. This macro behaves identically to
 printf.
@@ -93,7 +93,7 @@ printf.
 - `fmt`     - Message format
 - `args...` - Format specifiers
 
-#### PLOG_WARN(fmt, args...)
+#### plog_warn(fmt, args...)
 
 Writes a WARN level message to the log. This macro behaves identically to
 printf.
@@ -101,7 +101,7 @@ printf.
 - `fmt`     - Message format
 - `args...` - Format specifiers
 
-#### PLOG_ERROR(fmt, args...)
+#### plog_error(fmt, args...)
 
 Writes a ERROR level message to the log. This macro behaves identically to
 printf.
@@ -109,7 +109,7 @@ printf.
 - `fmt`     - Message format
 - `args...` - Format specifiers
 
-#### PLOG_FATAL(fmt, args...)
+#### plog_fatal(fmt, args...)
 
 Writes a FATAL level message to the log. This macro behaves identically to
 printf.
