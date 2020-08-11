@@ -172,12 +172,12 @@ int main(int argc, char** argv)
 
     // Default log level is INFO
 
-    PLOG_TRACE ("Test message: %d", 0);
-    PLOG_DEBUG ("Test message: %d", 1);
-    PLOG_INFO  ("Test message: %d", 2);
-    PLOG_WARN  ("Test message: %d", 3);
-    PLOG_ERROR ("Test message: %d", 4);
-    PLOG_FATAL ("Test message: %d", 5);
+    plog_trace ("Test message: %d", 0);
+    plog_debug ("Test message: %d", 1);
+    plog_info  ("Test message: %d", 2);
+    plog_warn  ("Test message: %d", 3);
+    plog_error ("Test message: %d", 4);
+    plog_fatal ("Test message: %d", 5);
 
     return 0;
 }
