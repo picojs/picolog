@@ -285,13 +285,13 @@ plog_turn_level_off ()
 }
 
 void
-plog_turn_filename_on ()
+plog_turn_file_on ()
 {
     gb_file = true;
 }
 
 void
-plog_turn_filename_off ()
+plog_turn_file_off ()
 {
     gb_file = false;
 }
