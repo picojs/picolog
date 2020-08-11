@@ -250,13 +250,6 @@ void plog_turn_func_on();
 void plog_turn_func_off();
 
 /**
- * Formats and sends a log entry to the enabled appenders. This function is
- * conditionally thread-safe in the sense that it does not write to shared
- * memory. This condition only holds if the appenders are themselves
- * (unconditionally) thread-safe. It is, however, susceptible to race conditions
- * in that the order of log entries is ultimately determined by the timing
- * differences of the individual threads.
- *
  * **WARN:** It is inadvisable to call this function directly. Use the macros
  * instead.
  */
