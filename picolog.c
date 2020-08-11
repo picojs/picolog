@@ -49,6 +49,8 @@
                            PLOG_FUNC_LEN      + \
                            PLOG_MSG_LEN)
 
+static plog_lock_fn gp_lock_fn       = NULL;  // Calls the lock function (if not NULL)
+static void*        gp_lock_userdata = NULL;  // Passed to the lock function on plog_write
 static bool         gb_initialized   = false; // True if logger is initialized
 static bool         gb_enabled       = true;  // True if logger is enabled
 static bool         gb_timestamp     = false; // True if timestamps are on
@@ -78,10 +80,10 @@ static const char* const level_str[] =
  */
 typedef struct
 {
-    plog_appender_t p_appender;
-    void*           p_userdata;
-    bool            b_enabled;
-    char            padding[7];
+    plog_appender_fn p_appender;
+    void*            p_userdata;
+    bool             b_enabled;
+    char             padding[7];
 } appender_info_t;
 
 /*
@@ -142,7 +144,7 @@ plog_disable ()
 }
 
 plog_id_t
-plog_appender_register (plog_appender_t p_appender, void* p_userdata)
+plog_appender_register (plog_appender_fn p_appender, void* p_userdata)
 {
     // Initialize logger if neccesary
     try_init();
@@ -323,6 +325,12 @@ void
 plog_write (plog_level_t level, const char* file, unsigned line,
                                 const char* func, const char* p_fmt, ...)
 {
+    // Calls the lock function (if the lock function is set)
+    if (gp_lock_fn)
+    {
+        gp_lock_fn(gp_lock_userdata);
+    }
+
     // Only write entry if there are registered appenders and the logger is
     // enabled
     if (0 == g_appender_count || !gb_enabled)

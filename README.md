@@ -26,6 +26,14 @@ Enables logging. **NOTE:** Logging is enabled by default.
 
 Disables logging.
 
+#### plog_set_lock(plog_lock_fn p_lock, void* p_userdata)
+
+Registers a lock function that is called while writing to the log. **NOTE:** Off by default.
+
+- `p_lock` - The lock function
+
+- `p_userdata` - User data that is supplied to the lock function during execution.
+
 #### plog_appender_register(p_appender, p_user_data, p_id)
 
 Registers (adds appender to logger) and enables the specified appender. An

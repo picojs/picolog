@@ -41,9 +41,17 @@ extern "C" {
 /*
  * Configuration constants/macros.
  */
-#define PLOG_MAX_APPENDERS  8
+#ifndef PLOG_MAX_APPENDERS
+#define PLOG_MAX_APPENDERS 16
+#endif
+
+#ifndef PLOG_MAX_MSG_LENGTH
 #define PLOG_MAX_MSG_LENGTH 512
+#endif
+
+#ifndef PLOG_ASSERT
 #define PLOG_ASSERT(expr)   assert(expr)
+#endif
 
 /**
  * These codes allow different layers of granularity when logging. See the
@@ -64,7 +72,12 @@ typedef enum
  * Appender function definition. An appender writes a log entry to an output
  * stream. This could be the console, a file, a network connection, etc...
  */
-typedef void (*plog_appender_t)(const char* p_entry, void* p_userdata);
+typedef void (*plog_appender_fn)(const char* p_entry, void* p_userdata);
+
+/**
+ *  Lock function definition. This is called during plog_write.
+ */
+typedef void (*plog_lock_fn)(void *p_userdata);
 
 /**
  * Identifies a registered appender.
@@ -87,6 +100,11 @@ void plog_enable();
 void plog_disable();
 
 /**
+ * Sets the locking function.
+ */
+void plog_set_lock(plog_lock_fn p_lock, void* p_userdata);
+
+/**
  * Registers (adds appender to logger) and enables the specified appender. An
  * appender writes a log entry to an output stream. This could be a console,
  * a file, a network connection, etc...
@@ -102,7 +120,7 @@ void plog_disable();
  * @return            An identifier for the appender. This ID is valid until the
  *                    appender is unregistered.
  */
-plog_id_t plog_appender_register(plog_appender_t p_appender, void* p_userdata);
+plog_id_t plog_appender_register(plog_appender_fn p_appender, void* p_userdata);
 
 /**
  * Unregisters appender (removes the appender from the logger).
