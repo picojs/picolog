@@ -143,6 +143,16 @@ plog_disable ()
     gb_enabled = false;
 }
 
+void plog_set_lock(plog_lock_fn p_lock, void* p_userdata)
+{
+    PLOG_ASSERT(p_lock);
+
+    try_init();
+
+    gp_lock_fn = p_lock;
+    gp_lock_userdata = p_userdata;
+}
+
 plog_id_t
 plog_appender_register (plog_appender_fn p_appender, void* p_userdata)
 {
