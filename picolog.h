@@ -140,7 +140,7 @@ plog_id_t plog_appender_register(plog_appender_fn p_appender,
  * @return       An identifier for the appender. This ID is valid until the
  *               appender is unregistered.
  */
-plog_id_t plog_register_fp(FILE* stream, plog_level_t level);
+plog_id_t plog_appender_register_stream(FILE* stream, plog_level_t level);
 
 /**
  * Unregisters appender (removes the appender from the logger).
@@ -163,14 +163,6 @@ void plog_appender_enable(plog_id_t id);
  * @param id The appender to disable
  */
 void plog_appender_disable(plog_id_t id);
-
-/**
- * Returns true if the specified appender is enabled, and false otherwise.
- * NOTE: Appenders are enabled by default after registration.
- *
- * @param id The appender to enable.
- */
-bool plog_appender_enabled(plog_id_t id);
 
 /**
  * Sets the logging level. Only those messages of equal or higher priority

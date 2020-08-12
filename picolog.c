@@ -190,7 +190,8 @@ plog_appender_register (plog_appender_fn p_appender,
     PLOG_ASSERT(false);
 }
 
-static void plog_fp_appender(const char* p_entry, void* p_user_data)
+static void
+plog_stream_appender (const char* p_entry, void* p_user_data)
 {
     FILE* stream = (FILE*)p_user_data;
     fprintf(stream, "%s\n", p_entry);
@@ -198,9 +199,15 @@ static void plog_fp_appender(const char* p_entry, void* p_user_data)
 }
 
 plog_id_t
-plog_appender_register_fp (FILE* stream, plog_level_t level)
+plog_appender_register_stream (FILE* stream, plog_level_t level)
 {
-    return plog_appender_register(plog_fp_appender, level, stream);
+    // Stream must not be NULL
+    PLOG_ASSERT(NULL != stream);
+
+    // Ensure level is valid
+    PLOG_ASSERT(level >= 0 && level < PLOG_LEVEL_COUNT);
+
+    return plog_appender_register(plog_stream_appender, level, stream);
 }
 
 void
@@ -254,20 +261,6 @@ plog_appender_disable (plog_id_t id)
 
     // Disable appender
     gp_appenders[id].b_enabled = false;
-}
-
-bool plog_appender_enabled(plog_id_t id)
-{
-    // Initialize logger if neccesary
-    try_init();
-
-    // Ensure ID is valid
-    PLOG_ASSERT(id < PLOG_MAX_APPENDERS);
-
-    // Ensure appender is registered
-    PLOG_ASSERT(NULL != gp_appenders[id].p_appender);
-
-    return gp_appenders[id].b_enabled;
 }
 
 void
