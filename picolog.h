@@ -72,12 +72,12 @@ typedef enum
  * Appender function definition. An appender writes a log entry to an output
  * stream. This could be the console, a file, a network connection, etc...
  */
-typedef void (*plog_appender_fn)(const char* p_entry, void* p_userdata);
+typedef void (*plog_appender_fn)(const char* p_entry, void* p_user_data);
 
 /**
  *  Lock function definition. This is called during plog_write.
  */
-typedef void (*plog_lock_fn)(void *p_userdata);
+typedef void (*plog_lock_fn)(void *p_user_data);
 
 /**
  * Identifies a registered appender.
@@ -102,7 +102,7 @@ void plog_disable();
 /**
  * Sets the locking function.
  */
-void plog_set_lock(plog_lock_fn p_lock, void* p_userdata);
+void plog_set_lock(plog_lock_fn p_lock, void* p_user_data);
 
 /**
  * Registers (adds appender to logger) and enables the specified appender. An
@@ -111,21 +111,21 @@ void plog_set_lock(plog_lock_fn p_lock, void* p_userdata);
  *
  * @param p_appender  Pointer to the appender function to register. An appender
  *                    function has the signature,
- *                    `void appender_func(const char* p_entry, void* p_userdata)`
+ *                    `void appender_func(const char* p_entry, void* p_user_data)`
 
- * @param p_userdata A pointer supplied to the appender function when writing
+ * @param p_user_data A pointer supplied to the appender function when writing
  *                    a log entry. This pointer is not modified by the logger.
  *                    If not required, pass in NULL for this parameter.
  *
  * @return            An identifier for the appender. This ID is valid until the
  *                    appender is unregistered.
  */
-plog_id_t plog_appender_register(plog_appender_fn p_appender, void* p_userdata);
+plog_id_t plog_appender_register(plog_appender_fn p_appender, void* p_user_data);
 
 /**
  * Unregisters appender (removes the appender from the logger).
  *
- * @param id The appender to unreqister
+ * @param id The appender to unregister
  */
 void plog_appender_unregister(plog_id_t id);
 
@@ -155,9 +155,9 @@ bool plog_appender_enabled(plog_id_t id);
 /**
  * Sets an appender's user data.
  * @param id The appender
- * @param p_userdata The user data to set.
+ * @param p_user_data The user data to set.
  */
-void plog_appender_set_userdata(plog_id_t id, void* p_userdata);
+void plog_appender_set_user_data(plog_id_t id, void* p_user_data);
 
 /**
  * Sets the logging level. Only those messages of equal or higher priority
@@ -250,7 +250,7 @@ void plog_turn_func_on();
 void plog_turn_func_off();
 
 /**
- * **WARN:** It is inadvisable to call this function directly. Use the macros
+ * WARNING: It is inadvisable to call this function directly. Use the macros
  * instead.
  */
 void plog_write(plog_level_t level,

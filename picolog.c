@@ -49,15 +49,17 @@
                            PLOG_FUNC_LEN      + \
                            PLOG_MSG_LEN)
 
-static plog_lock_fn gp_lock_fn       = NULL;  // Calls the lock function (if not NULL)
-static void*        gp_lock_userdata = NULL;  // Passed to the lock function on plog_write
-static bool         gb_initialized   = false; // True if logger is initialized
-static bool         gb_enabled       = true;  // True if logger is enabled
-static bool         gb_timestamp     = false; // True if timestamps are on
-static bool         gb_level         = true;  // True is level reporting is on
-static plog_level_t g_log_level      = PLOG_LEVEL_DEBUG; // Logger level
-static bool         gb_file          = false; // True if filenames/lines are on
-static bool         gb_func          = false; // True if function names are on
+static plog_lock_fn gp_lock_fn        =  NULL; // Calls the lock function
+                                               // (if not NULL)
+static void*        gp_lock_user_data = NULL;  // Passed to the lock function on
+                                               // plog_write
+static bool         gb_initialized    = false; // True if logger is initialized
+static bool         gb_enabled        = true;  // True if logger is enabled
+static bool         gb_timestamp      = false; // True if timestamps are on
+static bool         gb_level          = true;  // True is level reporting is on
+static plog_level_t g_log_level       = PLOG_LEVEL_INFO; // Logger level
+static bool         gb_file           = false; // True if filenames/lines are on
+static bool         gb_func           = false; // True if function names are on
 
 static size_t g_appender_count = 0; // Number of registered appenders
 
@@ -81,7 +83,7 @@ static const char* const level_str[] =
 typedef struct
 {
     plog_appender_fn p_appender;
-    void*            p_userdata;
+    void*            p_user_data;
     bool             b_enabled;
     char             padding[7];
 } appender_info_t;
@@ -102,12 +104,10 @@ try_init ()
         return;
     }
 
-    g_log_level = PLOG_LEVEL_INFO; // Default logger level is INFO
-
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
         gp_appenders[i].p_appender  = NULL;
-        gp_appenders[i].p_userdata = NULL;
+        gp_appenders[i].p_user_data = NULL;
         gp_appenders[i].b_enabled   = false;
     }
 
@@ -143,18 +143,18 @@ plog_disable ()
     gb_enabled = false;
 }
 
-void plog_set_lock(plog_lock_fn p_lock, void* p_userdata)
+void plog_set_lock(plog_lock_fn p_lock, void* p_user_data)
 {
     PLOG_ASSERT(p_lock);
 
     try_init();
 
     gp_lock_fn = p_lock;
-    gp_lock_userdata = p_userdata;
+    gp_lock_user_data = p_user_data;
 }
 
 plog_id_t
-plog_appender_register (plog_appender_fn p_appender, void* p_userdata)
+plog_appender_register (plog_appender_fn p_appender, void* p_user_data)
 {
     // Initialize logger if neccesary
     try_init();
@@ -169,7 +169,7 @@ plog_appender_register (plog_appender_fn p_appender, void* p_userdata)
         {
             // Store and enable appender
             gp_appenders[i].p_appender  = p_appender;
-            gp_appenders[i].p_userdata = p_userdata;
+            gp_appenders[i].p_user_data = p_user_data;
             gp_appenders[i].b_enabled   = true;
 
             g_appender_count++;
@@ -196,7 +196,7 @@ plog_appender_unregister (plog_id_t id)
 
     // Reset appender with given ID
     gp_appenders[id].p_appender  = NULL;
-    gp_appenders[id].p_userdata = NULL;
+    gp_appenders[id].p_user_data = NULL;
     gp_appenders[id].b_enabled   = false;
 
     g_appender_count--;
@@ -248,7 +248,7 @@ bool plog_appender_enabled(plog_id_t id)
     return gp_appenders[id].b_enabled;
 }
 
-void plog_appender_set_userdata(plog_id_t id, void* p_userdata)
+void plog_appender_set_user_data(plog_id_t id, void* p_user_data)
 {
     // Initialize logger if neccesary
     try_init();
@@ -259,7 +259,7 @@ void plog_appender_set_userdata(plog_id_t id, void* p_userdata)
     // Ensure appender is registered
     PLOG_ASSERT(NULL != gp_appenders[id].p_appender);
 
-    gp_appenders[id].p_userdata = p_userdata;
+    gp_appenders[id].p_user_data = p_user_data;
 }
 
 
@@ -338,7 +338,7 @@ plog_write (plog_level_t level, const char* file, unsigned line,
     // Calls the lock function (if the lock function is set)
     if (gp_lock_fn)
     {
-        gp_lock_fn(gp_lock_userdata);
+        gp_lock_fn(gp_lock_user_data);
     }
 
     // Only write entry if there are registered appenders and the logger is
@@ -411,7 +411,7 @@ plog_write (plog_level_t level, const char* file, unsigned line,
     {
         if (gp_appenders[i].b_enabled)
         {
-            gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_userdata);
+            gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data);
         }
     }
 }

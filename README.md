@@ -34,7 +34,7 @@ Registers a lock function that is called while writing to the log. **NOTE:** Off
 
 - `p_userdata` - User data that is supplied to the lock function during execution.
 
-#### plog_appender_register(p_appender, p_user_data, p_id)
+#### plog_appender_register(p_appender, p_user_data)
 
 Registers (adds appender to logger) and enables the specified appender. An
 appender writes a log entry to an output stream. This could be a console,
