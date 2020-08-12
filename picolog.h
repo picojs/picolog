@@ -29,7 +29,10 @@
 #ifndef PICOLOG_H
 #define PICOLOG_H
 
+#ifndef PLOG_ASSERT
 #include <assert.h>  // assert
+#endif
+
 #include <stdarg.h>  // ...
 #include <stdbool.h> // bool, true, false
 #include <stddef.h>  // NULL, size_t
