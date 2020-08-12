@@ -53,7 +53,7 @@ a file, a network connection, etc...
 **returns**       An identifier for the appender. This ID is valid until the
                   appender is unregistered.
 
-#### plog_appender_register_fp(stream, level)
+#### plog_appender_register_steam(stream, level)
 
 Registers an output stream appender.
 
