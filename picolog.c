@@ -29,7 +29,7 @@
 #include "picolog.h"
 
 #include <stdarg.h> // va_list, va_start, va_end
-#include <stdio.h>  // vsnprintf
+#include <stdio.h>  // vsnprintf, FILE, fprintf, fflush
 #include <string.h> // strncat
 #include <time.h>   // time, strftime
 
@@ -188,6 +188,19 @@ plog_appender_register (plog_appender_fn p_appender,
 
     // This should never happen
     PLOG_ASSERT(false);
+}
+
+static void plog_fp_appender(const char* p_entry, void* p_user_data)
+{
+    FILE* stream = (FILE*)p_user_data;
+    fprintf(stream, "%s\n", p_entry);
+    fflush(stream);
+}
+
+plog_id_t
+plog_appender_register_fp (FILE* stream, plog_level_t level)
+{
+    return plog_appender_register(plog_fp_appender, level, stream);
 }
 
 void

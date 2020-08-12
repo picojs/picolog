@@ -36,6 +36,7 @@
 #include <stdarg.h>  // ...
 #include <stdbool.h> // bool, true, false
 #include <stddef.h>  // NULL, size_t
+#include <stdio.h>    // FILE
 
 #ifdef __cplusplus
 extern "C" {
@@ -115,7 +116,9 @@ void plog_set_lock(plog_lock_fn p_lock, void* p_user_data);
  * @param p_appender  Pointer to the appender function to register. An appender
  *                    function has the signature,
  *                    `void appender_func(const char* p_entry, void* p_user_data)`
-
+ *
+ * @param level       The appender's log level
+ *
  * @param p_user_data A pointer supplied to the appender function when writing
  *                    a log entry. This pointer is not modified by the logger.
  *                    If not required, pass in NULL for this parameter.
@@ -126,6 +129,18 @@ void plog_set_lock(plog_lock_fn p_lock, void* p_user_data);
 plog_id_t plog_appender_register(plog_appender_fn p_appender,
                                  plog_level_t level,
                                  void* p_user_data);
+
+/**
+ * Registers an output stream appender.
+ *
+ * @param stream The output stream to write to
+ *
+ * @param level  The appender's log level
+ *
+ * @return       An identifier for the appender. This ID is valid until the
+ *               appender is unregistered.
+ */
+plog_id_t plog_register_fp(FILE* stream, plog_level_t level);
 
 /**
  * Unregisters appender (removes the appender from the logger).
