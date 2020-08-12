@@ -34,7 +34,7 @@ Registers a lock function that is called while writing to the log. **NOTE:** Off
 
 - `p_userdata` - User data that is supplied to the lock function during execution.
 
-#### plog_appender_register(p_appender, p_user_data)
+#### plog_appender_register(p_appender, level, p_user_data)
 
 Registers (adds appender to logger) and enables the specified appender. An
 appender writes a log entry to an output stream. This could be a console,
@@ -43,6 +43,8 @@ a file, a network connection, etc...
 - `p_appender`  - Pointer to the appender function to register. An appender
                   function has the signature,
                   `void appender_func(const char* p_entry, void* p_user_data)`
+
+- `level`       - The logging threshold for the appender
 
 - `p_user_data` - A pointer supplied to the appender function when writing a log
                   entry. This pointer is not modified by the logger. If not
@@ -172,7 +174,7 @@ void appender(const char* p_msg, void* p_user_data)
 
 int main(int argc, char** argv)
 {
-    plog_appender_register(appender, NULL);
+    plog_appender_register(appender, PLOG_LEVEL_INFO, NULL);
 
     plog_turn_timestamp_on();
     plog_turn_file_on();
@@ -194,8 +196,8 @@ int main(int argc, char** argv)
 Output:
 --------
 
->[29/02/20 14:35:42] [INFO] [example1.c:20] [main] Test message: 2<br/>
->[29/02/20 14:35:42] [WARN] [example1.c:21] [main] Test message: 3<br/>
+>[29/02/20 14:35:42] [INFO ] [example1.c:20] [main] Test message: 2<br/>
+>[29/02/20 14:35:42] [WARN ] [example1.c:21] [main] Test message: 3<br/>
 >[29/02/20 14:35:42] [ERROR] [example1.c:22] [main] Test message: 4<br/>
 >[29/02/20 14:35:42] [FATAL] [example1.c:23] [main] Test message: 5
 

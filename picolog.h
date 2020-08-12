@@ -120,7 +120,9 @@ void plog_set_lock(plog_lock_fn p_lock, void* p_user_data);
  * @return            An identifier for the appender. This ID is valid until the
  *                    appender is unregistered.
  */
-plog_id_t plog_appender_register(plog_appender_fn p_appender, void* p_user_data);
+plog_id_t plog_appender_register(plog_appender_fn p_appender,
+                                 plog_level_t level,
+                                 void* p_user_data);
 
 /**
  * Unregisters appender (removes the appender from the logger).

@@ -70,8 +70,8 @@ static const char* const level_str[] =
 {
     "TRACE",
     "DEBUG",
-    "INFO",
-    "WARN",
+    "INFO ",
+    "WARN ",
     "ERROR",
     "FATAL",
     0
@@ -83,9 +83,10 @@ static const char* const level_str[] =
 typedef struct
 {
     plog_appender_fn p_appender;
+    plog_level_t     level;
     void*            p_user_data;
     bool             b_enabled;
-    char             padding[7];
+
 } appender_info_t;
 
 /*
@@ -107,6 +108,7 @@ try_init ()
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
         gp_appenders[i].p_appender  = NULL;
+        gp_appenders[i].level       = PLOG_LEVEL_INFO;
         gp_appenders[i].p_user_data = NULL;
         gp_appenders[i].b_enabled   = false;
     }
@@ -154,13 +156,18 @@ void plog_set_lock(plog_lock_fn p_lock, void* p_user_data)
 }
 
 plog_id_t
-plog_appender_register (plog_appender_fn p_appender, void* p_user_data)
+plog_appender_register (plog_appender_fn p_appender,
+                        plog_level_t level,
+                        void* p_user_data)
 {
     // Initialize logger if neccesary
     try_init();
 
     // Check if there is space for a new appender.
     PLOG_ASSERT(g_appender_count < PLOG_MAX_APPENDERS);
+
+    // Ensure level is valid
+    PLOG_ASSERT(level >= 0 && level < PLOG_LEVEL_COUNT);
 
     // Iterate through appender array and find an empty slot.
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
@@ -169,6 +176,7 @@ plog_appender_register (plog_appender_fn p_appender, void* p_user_data)
         {
             // Store and enable appender
             gp_appenders[i].p_appender  = p_appender;
+            gp_appenders[i].level       = level;
             gp_appenders[i].p_user_data = p_user_data;
             gp_appenders[i].b_enabled   = true;
 
@@ -196,10 +204,11 @@ plog_appender_unregister (plog_id_t id)
 
     // Reset appender with given ID
     gp_appenders[id].p_appender  = NULL;
+    gp_appenders[id].level       = PLOG_LEVEL_INFO;
     gp_appenders[id].p_user_data = NULL;
     gp_appenders[id].b_enabled   = false;
 
-    g_appender_count--;
+    g_appender_count -= 1;
 }
 
 void
@@ -336,13 +345,6 @@ plog_write (plog_level_t level, const char* file, unsigned line,
     // Ensure valid log level
     PLOG_ASSERT(level < PLOG_LEVEL_COUNT);
 
-    // Only write the log entry if the current logger level is less than or
-    // equal to the specified level
-    if (g_log_level > level)
-    {
-        return;
-    }
-
     char p_entry_str[PLOG_ENTRY_LEN + 1]; // Ensure there is space for null char
     p_entry_str[0] = '\0'; // Ensure the entry is null terminated
 
@@ -394,7 +396,9 @@ plog_write (plog_level_t level, const char* file, unsigned line,
     // Send the finished entry to all enabled appenders
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
-        if (gp_appenders[i].b_enabled)
+        if (gp_appenders[i].b_enabled &&
+            g_log_level <= gp_appenders[i].level &&
+            g_log_level <= level)
         {
             gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data);
         }
