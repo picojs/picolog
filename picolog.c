@@ -248,21 +248,6 @@ bool plog_appender_enabled(plog_id_t id)
     return gp_appenders[id].b_enabled;
 }
 
-void plog_appender_set_user_data(plog_id_t id, void* p_user_data)
-{
-    // Initialize logger if neccesary
-    try_init();
-
-    // Ensure ID is valid
-    PLOG_ASSERT(id < PLOG_MAX_APPENDERS);
-
-    // Ensure appender is registered
-    PLOG_ASSERT(NULL != gp_appenders[id].p_appender);
-
-    gp_appenders[id].p_user_data = p_user_data;
-}
-
-
 void
 plog_set_level (plog_level_t level)
 {

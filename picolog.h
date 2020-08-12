@@ -153,13 +153,6 @@ void plog_appender_disable(plog_id_t id);
 bool plog_appender_enabled(plog_id_t id);
 
 /**
- * Sets an appender's user data.
- * @param id The appender
- * @param p_user_data The user data to set.
- */
-void plog_appender_set_user_data(plog_id_t id, void* p_user_data);
-
-/**
  * Sets the logging level. Only those messages of equal or higher priority
  * (severity) than this value will be logged.
  *
