@@ -43,14 +43,14 @@
 #define PLOG_FILE_LEN      4096 // PATH_MAX on Linux
 #define PLOG_FUNC_LEN      32
 #define PLOG_MSG_LEN       PLOG_MAX_MSG_LENGTH
-#define PLOG_MSG_BREAK_LEN 1
+#define PLOG_BREAK_LEN     1
 
 #define PLOG_ENTRY_LEN     (PLOG_TIMESTAMP_LEN + \
                            PLOG_LEVEL_LEN      + \
                            PLOG_FILE_LEN       + \
                            PLOG_FUNC_LEN       + \
                            PLOG_MSG_LEN        + \
-                           PLOG_MSG_BREAK_LEN)
+                           PLOG_BREAK_LEN)
 
 #define PLOG_TIME_FMT_LEN 32
 #define PLOG_TIME_FMT     "%d/%m/%g %H:%M:%S"
@@ -404,7 +404,7 @@ append_timestamp (char* p_entry_str)
     snprintf(p_time_str, sizeof(p_time_str), "%s ",
              time_str(p_tmp_str, sizeof(p_tmp_str)));
 
-    strncat(p_entry_str, p_time_str, PLOG_ENTRY_LEN);
+    strncat(p_entry_str, p_time_str, PLOG_TIMESTAMP_LEN);
 }
 
 static void
@@ -424,7 +424,7 @@ append_level (char* p_entry_str, plog_level_t level, bool b_colors)
         snprintf(p_level_str, sizeof(p_level_str), "%s ", level_str[level]);
     }
 
-    strncat(p_entry_str, p_level_str, PLOG_ENTRY_LEN);
+    strncat(p_entry_str, p_level_str, PLOG_LEVEL_LEN);
 }
 
 static void
@@ -445,7 +445,7 @@ append_file(char* p_entry_str, const char* file, unsigned line, bool b_colors)
         snprintf(p_file_str, sizeof(p_file_str), "%s:%u ", file, line);
     }
 
-    strncat(p_entry_str, p_file_str, PLOG_ENTRY_LEN);
+    strncat(p_entry_str, p_file_str, PLOG_FILE_LEN);
 }
 
 static void
@@ -465,7 +465,7 @@ append_func(char* p_entry_str, const char* func, bool b_colors)
         snprintf(p_func_str, sizeof(p_func_str), "[%s] ", func);
     }
 
-    strncat(p_entry_str, p_func_str, PLOG_ENTRY_LEN);
+    strncat(p_entry_str, p_func_str, PLOG_FUNC_LEN);
 }
 
 void
@@ -531,8 +531,8 @@ plog_write (plog_level_t level, const char* file, unsigned line,
             vsnprintf(p_msg_str, sizeof(p_msg_str), p_fmt, args);
             va_end(args);
 
-            strncat(p_entry_str, p_msg_str, sizeof(p_entry_str));
-            strncat(p_entry_str, "\n", PLOG_ENTRY_LEN);
+            strncat(p_entry_str, p_msg_str, PLOG_MSG_LEN);
+            strcat(p_entry_str, "\n");
 
             gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data);
         }
