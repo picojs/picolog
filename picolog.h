@@ -103,9 +103,6 @@ void plog_enable();
  */
 void plog_disable();
 
-void plog_turn_colors_on();
-void plog_turn_colors_off();
-
 /**
  * Sets the locking function.
  */
@@ -175,6 +172,8 @@ void plog_appender_disable(plog_id_t id);
  */
 void plog_set_level(plog_level_t level);
 
+
+
 /**
  * Writes a TRACE level message to the log. Usage is similar to printf (i.e.
  * PLOG_TRACE(format, args...))
@@ -216,6 +215,20 @@ void plog_set_level(plog_level_t level);
  */
 #define plog_fatal(...) \
         plog_write(PLOG_LEVEL_FATAL, __FILE__, __LINE__, __func__, __VA_ARGS__)
+
+/**
+ *  Turns color ouput on for the specified appender. NOTE: Off by default.
+ *
+ *  @param id The appender id
+ */
+void plog_turn_colors_on(plog_id_t id);
+
+/**
+ *  Turns colors ouput off for the specified appender.
+ *
+ *  @param id The appender id
+ */
+void plog_turn_colors_off(plog_id_t id);
 
 /**
  * Turns timestamp reporting on. NOTE: Off by default.

@@ -98,7 +98,7 @@ typedef struct
     plog_level_t     level;
     void*            p_user_data;
     bool             b_enabled;
-    bool             b_colors_enabled;
+    bool             b_colors;
 
 } appender_info_t;
 
@@ -124,6 +124,7 @@ try_init ()
         gp_appenders[i].level       = PLOG_LEVEL_INFO;
         gp_appenders[i].p_user_data = NULL;
         gp_appenders[i].b_enabled   = false;
+        gp_appenders[i].b_colors    = false;
     }
 
     gb_initialized = true;
@@ -156,18 +157,6 @@ void
 plog_disable ()
 {
     gb_enabled = false;
-}
-
-void
-plog_turn_colors_on()
-{
-    gb_colors = true;
-}
-
-void
-plog_turn_colors_off()
-{
-    gb_colors = false;
 }
 
 void plog_set_lock(plog_lock_fn p_lock, void* p_user_data)
@@ -253,6 +242,7 @@ plog_appender_unregister (plog_id_t id)
     gp_appenders[id].level       = PLOG_LEVEL_INFO;
     gp_appenders[id].p_user_data = NULL;
     gp_appenders[id].b_enabled   = false;
+    gp_appenders[id].b_colors    = false;
 
     g_appender_count -= 1;
 }
@@ -296,6 +286,38 @@ plog_set_level (plog_level_t level)
     PLOG_ASSERT(level >= 0 && level < PLOG_LEVEL_COUNT);
 
     g_log_level = level;
+}
+
+void
+plog_turn_colors_on (plog_id_t id)
+{
+    // Initialize logger if neccesary
+    try_init();
+
+    // Ensure ID is valid
+    PLOG_ASSERT(id < PLOG_MAX_APPENDERS);
+
+    // Ensure appender is registered
+    PLOG_ASSERT(NULL != gp_appenders[id].p_appender);
+
+    // Disable appender
+    gp_appenders[id].b_colors = true;
+}
+
+void
+plog_turn_colors_off (plog_id_t id)
+{
+    // Initialize logger if neccesary
+    try_init();
+
+    // Ensure ID is valid
+    PLOG_ASSERT(id < PLOG_MAX_APPENDERS);
+
+    // Ensure appender is registered
+    PLOG_ASSERT(NULL != gp_appenders[id].p_appender);
+
+    // Disable appender
+    gp_appenders[id].b_colors = false;
 }
 
 void
@@ -357,6 +379,79 @@ time_str (char* p_str, size_t len)
     return p_str;
 }
 
+static void
+append_timestamp (char* p_entry_str)
+{
+    char p_time_str[PLOG_TIMESTAMP_LEN];
+    char p_tmp_str[PLOG_TIMESTAMP_LEN];
+
+    snprintf(p_time_str, sizeof(p_time_str), "%s ",
+             time_str(p_tmp_str, sizeof(p_tmp_str)));
+
+    strncat(p_entry_str, p_time_str, PLOG_ENTRY_LEN - 1);
+}
+
+static void
+append_level (char* p_entry_str, plog_level_t level, bool b_colors)
+{
+    char p_level_str[PLOG_LEVEL_LEN];
+
+    if (b_colors)
+    {
+        snprintf(p_level_str, sizeof(p_level_str), "%c%s%s %c%s",
+        PLOG_TERM_CODE, level_color[level],
+        level_str[level],
+        PLOG_TERM_CODE, PLOG_TERM_RESET);
+    }
+    else
+    {
+        snprintf(p_level_str, sizeof(p_level_str), "%s ", level_str[level]);
+    }
+
+    strncat(p_entry_str, p_level_str, PLOG_ENTRY_LEN - 1);
+}
+
+static void
+append_file(char* p_entry_str, const char* file, unsigned line, bool b_colors)
+{
+    char p_file_str[PLOG_FILE_LEN];
+
+    if (b_colors)
+    {
+        snprintf(p_file_str, sizeof(p_file_str), "%c%s%s:%u%c%s ",
+                 PLOG_TERM_CODE, PLOG_TERM_GRAY,
+                 file, line,
+                 PLOG_TERM_CODE, PLOG_TERM_RESET);
+
+    }
+    else
+    {
+        snprintf(p_file_str, sizeof(p_file_str), "%s:%u ", file, line);
+    }
+
+    strncat(p_entry_str, p_file_str, PLOG_ENTRY_LEN - 1);
+}
+
+static void
+append_func(char* p_entry_str, const char* func, bool b_colors)
+{
+   char p_func_str[PLOG_FUNC_LEN];
+
+    if (b_colors)
+    {
+        snprintf(p_func_str, sizeof(p_func_str), "%c%s[%s] %c%s",
+                 PLOG_TERM_CODE, PLOG_TERM_GRAY,
+                 func,
+                 PLOG_TERM_CODE, PLOG_TERM_RESET);
+    }
+    else
+    {
+        snprintf(p_func_str, sizeof(p_func_str), "[%s] ", func);
+    }
+
+    strncat(p_entry_str, p_func_str, PLOG_ENTRY_LEN - 1);
+}
+
 void
 plog_write (plog_level_t level, const char* file, unsigned line,
                                 const char* func, const char* p_fmt, ...)
@@ -377,99 +472,49 @@ plog_write (plog_level_t level, const char* file, unsigned line,
     // Ensure valid log level
     PLOG_ASSERT(level < PLOG_LEVEL_COUNT);
 
-    char p_entry_str[PLOG_ENTRY_LEN + 1]; // Ensure there is space for null char
-    p_entry_str[0] = '\0'; // Ensure the entry is null terminated
-
-    // Append the timestamp
-    if (gb_timestamp)
-    {
-        char p_time_str[PLOG_TIMESTAMP_LEN];
-        char p_tmp_str[PLOG_TIMESTAMP_LEN];
-
-        snprintf(p_time_str, sizeof(p_time_str), "%s ",
-                 time_str(p_tmp_str, sizeof(p_tmp_str)));
-
-        strncat(p_entry_str, p_time_str, sizeof(p_entry_str) - 1);
-    }
-
-    // Append the logger level
-    if (gb_level)
-    {
-        char p_level_str[PLOG_LEVEL_LEN];
-
-        if (gb_colors)
-        {
-            snprintf(p_level_str, sizeof(p_level_str), "%c%s%s %c%s",
-            PLOG_TERM_CODE, level_color[level],
-            level_str[level],
-            PLOG_TERM_CODE, PLOG_TERM_RESET);
-        }
-        else
-        {
-            snprintf(p_level_str, sizeof(p_level_str), "%s ", level_str[level]);
-        }
-
-        strncat(p_entry_str, p_level_str, sizeof(p_entry_str) - 1);
-    }
-
-    // Append the filename/line number
-    if (gb_file)
-    {
-        char p_file_str[PLOG_FILE_LEN];
-
-        if (gb_colors)
-        {
-            snprintf(p_file_str, sizeof(p_file_str), "%c%s%s:%u%c%s ",
-                     PLOG_TERM_CODE, PLOG_TERM_GRAY,
-                     file, line,
-                     PLOG_TERM_CODE, PLOG_TERM_RESET);
-
-        }
-        else
-        {
-            snprintf(p_file_str, sizeof(p_file_str), "%s:%u ", file, line);
-        }
-
-        strncat(p_entry_str, p_file_str, sizeof(p_entry_str) - 1);
-    }
-
-    // Append the function name
-    if (gb_func)
-    {
-        char p_func_str[PLOG_FUNC_LEN];
-
-        if (gb_colors)
-        {
-            snprintf(p_func_str, sizeof(p_func_str), "%c%s[%s] %c%s",
-                     PLOG_TERM_CODE, PLOG_TERM_GRAY,
-                     func,
-                     PLOG_TERM_CODE, PLOG_TERM_RESET);
-        }
-        else
-        {
-            snprintf(p_func_str, sizeof(p_func_str), "[%s] ", func);
-        }
-
-        strncat(p_entry_str, p_func_str, sizeof(p_entry_str) - 1);
-    }
-
-    // Append the log message
-    char p_msg_str[PLOG_MSG_LEN];
-
-    va_list args;
-    va_start(args, p_fmt);
-    vsnprintf(p_msg_str, sizeof(p_msg_str), p_fmt, args);
-    va_end(args);
-
-    strncat(p_entry_str, p_msg_str, sizeof(p_entry_str) - 1);
-
-    // Send the finished entry to all enabled appenders
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
         if (gp_appenders[i].b_enabled &&
             g_log_level <= gp_appenders[i].level &&
             g_log_level <= level)
         {
+            char p_entry_str[PLOG_ENTRY_LEN + 1]; // Ensure there is space for null char
+            p_entry_str[0] = '\0'; // Ensure the entry is null terminated
+
+            // Append a timestamp
+            if (gb_timestamp)
+            {
+                append_timestamp(p_entry_str);
+            }
+
+            // Append the logger level
+            if (gb_level)
+            {
+                append_level(p_entry_str, level, gp_appenders[i].b_colors);
+            }
+
+            // Append the filename/line number
+            if (gb_file)
+            {
+                append_file(p_entry_str, file, line, gp_appenders[i].b_colors);
+            }
+
+            // Append the function name
+            if (gb_func)
+            {
+                append_func(p_entry_str, func, gp_appenders[i].b_colors);
+            }
+
+            // Append the log message
+            char p_msg_str[PLOG_MSG_LEN];
+
+            va_list args;
+            va_start(args, p_fmt);
+            vsnprintf(p_msg_str, sizeof(p_msg_str), p_fmt, args);
+            va_end(args);
+
+            strncat(p_entry_str, p_msg_str, sizeof(p_entry_str) - 1);
+
             gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data);
         }
     }

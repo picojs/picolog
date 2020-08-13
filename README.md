@@ -138,6 +138,18 @@ printf.
 - `fmt`     - Message format
 - `args...` - Format specifiers
 
+#### plog_turn_colors_on(id)
+
+Turns color output on for the specified appender. NOTE: Off by default.
+
+- `id`     - The appender id
+
+#### plog_turn_colors_off()
+
+Turns color ouput off for the specified appender.
+
+- `id`     - The appender id
+
 #### plog_turn_timestamp_on()
 
 Turns timestamp reporting on. **NOTE:** Off by default.
