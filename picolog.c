@@ -43,12 +43,14 @@
 #define PLOG_FILE_LEN      4096 // PATH_MAX on Linux
 #define PLOG_FUNC_LEN      32
 #define PLOG_MSG_LEN       PLOG_MAX_MSG_LENGTH
+#define PLOG_MSG_BREAK_LEN 1
 
-#define PLOG_ENTRY_LEN    (PLOG_TIMESTAMP_LEN + \
-                           PLOG_LEVEL_LEN     + \
-                           PLOG_FILE_LEN      + \
-                           PLOG_FUNC_LEN      + \
-                           PLOG_MSG_LEN)
+#define PLOG_ENTRY_LEN     (PLOG_TIMESTAMP_LEN + \
+                           PLOG_LEVEL_LEN      + \
+                           PLOG_FILE_LEN       + \
+                           PLOG_FUNC_LEN       + \
+                           PLOG_MSG_LEN        + \
+                           PLOG_MSG_BREAK_LEN)
 
 #define PLOG_TIME_FMT_LEN 32
 #define PLOG_TIME_FMT     "%d/%m/%g %H:%M:%S"
@@ -214,7 +216,7 @@ static void
 stream_appender (const char* p_entry, void* p_user_data)
 {
     FILE* stream = (FILE*)p_user_data;
-    fprintf(stream, "%s\n", p_entry);
+    fprintf(stream, "%s", p_entry);
     fflush(stream);
 }
 
@@ -529,7 +531,8 @@ plog_write (plog_level_t level, const char* file, unsigned line,
             vsnprintf(p_msg_str, sizeof(p_msg_str), p_fmt, args);
             va_end(args);
 
-            strncat(p_entry_str, p_msg_str, sizeof(p_entry_str) - 1);
+            strncat(p_entry_str, p_msg_str, sizeof(p_entry_str));
+            strncat(p_entry_str, "\n", PLOG_ENTRY_LEN);
 
             gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data);
         }

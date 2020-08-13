@@ -36,7 +36,6 @@ int main(int argc, char** argv)
     plog_set_time_fmt("%H:%M:%S");
     plog_turn_timestamp_on();
     plog_turn_file_on();
-    plog_turn_func_on();
 
     // Default log level is INFO
 

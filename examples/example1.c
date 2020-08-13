@@ -28,7 +28,7 @@
 
 void appender(const char* p_msg, void* p_user_data)
 {
-    printf("%s\n", p_msg);
+    printf("%s", p_msg);
 }
 
 int main(int argc, char** argv)

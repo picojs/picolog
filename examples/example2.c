@@ -28,12 +28,12 @@
 
 void appender1(const char* p_msg, void* p_user_data)
 {
-    printf("Appender 1: %s\n", p_msg);
+    printf("Appender 1: %s", p_msg);
 }
 
 void appender2(const char* p_msg, void* p_user_data)
 {
-    printf("Appender 2: %s\n", p_msg);
+    printf("Appender 2: %s", p_msg);
 }
 
 void log_all()
