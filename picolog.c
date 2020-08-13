@@ -54,7 +54,7 @@
 #define PLOG_TERM_GRAY       "[90m"
 #define PLOG_TERM_WHITE      "[37m"
 
-static plog_lock_fn gp_lock_fn        =  NULL; // Calls the lock function
+static plog_lock_fn gp_lock           =  NULL; // Calls the lock function
                                                // (if not NULL)
 static void*        gp_lock_user_data = NULL;  // Passed to the lock function on
                                                // plog_write
@@ -83,7 +83,8 @@ static const char* const level_str[] =
     0
 };
 
-static const char *level_color[] =
+// Appropriated from https://github.com/rxi/log.c (MIT licensed)
+static const char* level_color[] =
 {
   "\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m", 0
 };
@@ -97,6 +98,7 @@ typedef struct
     plog_level_t     level;
     void*            p_user_data;
     bool             b_enabled;
+    bool             b_colors_enabled;
 
 } appender_info_t;
 
@@ -156,12 +158,14 @@ plog_disable ()
     gb_enabled = false;
 }
 
-void plog_colors_enable()
+void
+plog_turn_colors_on()
 {
     gb_colors = true;
 }
 
-void plog_colors_disable()
+void
+plog_turn_colors_off()
 {
     gb_colors = false;
 }
@@ -172,7 +176,7 @@ void plog_set_lock(plog_lock_fn p_lock, void* p_user_data)
 
     try_init();
 
-    gp_lock_fn = p_lock;
+    gp_lock = p_lock;
     gp_lock_user_data = p_user_data;
 }
 
@@ -209,6 +213,7 @@ plog_appender_register (plog_appender_fn p_appender,
 
     // This should never happen
     PLOG_ASSERT(false);
+    return 0;
 }
 
 static void
@@ -357,9 +362,9 @@ plog_write (plog_level_t level, const char* file, unsigned line,
                                 const char* func, const char* p_fmt, ...)
 {
     // Calls the lock function (if the lock function is set)
-    if (gp_lock_fn)
+    if (NULL != gp_lock)
     {
-        gp_lock_fn(gp_lock_user_data);
+        gp_lock(gp_lock_user_data);
     }
 
     // Only write entry if there are registered appenders and the logger is

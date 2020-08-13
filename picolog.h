@@ -103,8 +103,8 @@ void plog_enable();
  */
 void plog_disable();
 
-void plog_colors_enable();
-void plog_colors_disable();
+void plog_turn_colors_on();
+void plog_turn_colors_off();
 
 /**
  * Sets the locking function.

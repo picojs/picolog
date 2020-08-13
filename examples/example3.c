@@ -28,7 +28,7 @@
 
 int main(int argc, char** argv)
 {
-    plog_colors_enable();
+    plog_turn_colors_on();
 
     plog_appender_register_stream(stdout, PLOG_LEVEL_TRACE);
     plog_set_level(PLOG_LEVEL_TRACE);
