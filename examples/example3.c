@@ -33,6 +33,7 @@ int main(int argc, char** argv)
 
     plog_set_level(PLOG_LEVEL_TRACE);
 
+    plog_set_time_fmt("%H:%M:%S");
     plog_turn_timestamp_on();
     plog_turn_file_on();
     plog_turn_func_on();

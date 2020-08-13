@@ -40,18 +40,22 @@
 
 #define PLOG_TIMESTAMP_LEN 32
 #define PLOG_LEVEL_LEN     16
-#define PLOG_FILE_LEN      64
+#define PLOG_FILE_LEN      4096 // PATH_MAX on Linux
 #define PLOG_FUNC_LEN      32
 #define PLOG_MSG_LEN       PLOG_MAX_MSG_LENGTH
+
 #define PLOG_ENTRY_LEN    (PLOG_TIMESTAMP_LEN + \
                            PLOG_LEVEL_LEN     + \
                            PLOG_FILE_LEN      + \
                            PLOG_FUNC_LEN      + \
                            PLOG_MSG_LEN)
 
-#define PLOG_TERM_CODE        0x1B
-#define PLOG_TERM_RESET      "[0m"
-#define PLOG_TERM_GRAY       "[90m"
+#define PLOG_TIME_FMT_LEN 32
+#define PLOG_TIME_FMT     "%d/%m/%g %H:%M:%S"
+
+#define PLOG_TERM_CODE    0x1B
+#define PLOG_TERM_RESET   "[0m"
+#define PLOG_TERM_GRAY    "[90m"
 
 static plog_lock_fn gp_lock           =  NULL; // Calls the lock function
                                                // (if not NULL)
@@ -65,7 +69,8 @@ static plog_level_t g_log_level       = PLOG_LEVEL_INFO; // Logger level
 static bool         gb_file           = false; // True if filenames/lines are on
 static bool         gb_func           = false; // True if function names are on
 
-static size_t g_appender_count = 0; // Number of registered appenders
+static char   gp_time_fmt[PLOG_TIME_FMT_LEN]; // Global time format
+static size_t g_appender_count = 0;           // Number of appenders
 
 /*
  * Logger level strings indexed by level ID (plog_level_t).
@@ -125,6 +130,8 @@ try_init ()
         gp_appenders[i].b_colors    = false;
     }
 
+    strncpy(gp_time_fmt, PLOG_TIME_FMT, PLOG_TIME_FMT_LEN);
+
     gb_initialized = true;
 }
 
@@ -159,7 +166,7 @@ plog_disable ()
 
 void plog_set_lock(plog_lock_fn p_lock, void* p_user_data)
 {
-    PLOG_ASSERT(p_lock);
+    PLOG_ASSERT(NULL != p_lock);
 
     try_init();
 
@@ -319,6 +326,12 @@ plog_turn_colors_off (plog_id_t id)
 }
 
 void
+plog_set_time_fmt (const char* fmt)
+{
+    strncpy(gp_time_fmt, fmt, PLOG_TIME_FMT_LEN);
+}
+
+void
 plog_turn_timestamp_on ()
 {
     gb_timestamp = true;
@@ -373,7 +386,10 @@ static char*
 time_str (char* p_str, size_t len)
 {
     time_t now = time(0);
-    strftime(p_str, len, "%d/%m/%g %H:%M:%S", localtime(&now));
+    size_t ret = strftime(p_str, len, gp_time_fmt, localtime(&now));
+
+    PLOG_ASSERT(ret > 0);
+
     return p_str;
 }
 

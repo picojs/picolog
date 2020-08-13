@@ -50,7 +50,7 @@ extern "C" {
 #endif
 
 #ifndef PLOG_MAX_MSG_LENGTH
-#define PLOG_MAX_MSG_LENGTH 512
+#define PLOG_MAX_MSG_LENGTH 4096
 #endif
 
 #ifndef PLOG_ASSERT
@@ -227,6 +227,12 @@ void plog_turn_colors_on(plog_id_t id);
  *  @param id The appender id
  */
 void plog_turn_colors_off(plog_id_t id);
+
+/**
+ * Sets the log timestamp format according to:
+ * https://man7.org/linux/man-pages/man3/strftime.3.html
+ */
+void plog_set_time_fmt(const char* fmt);
 
 /**
  * Turns timestamp reporting on. NOTE: Off by default.
