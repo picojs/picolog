@@ -49,6 +49,11 @@
                            PLOG_FUNC_LEN      + \
                            PLOG_MSG_LEN)
 
+#define PLOG_TERM_CODE        0x1B
+#define PLOG_TERM_RESET      "[0m"
+#define PLOG_TERM_GRAY       "[90m"
+#define PLOG_TERM_WHITE      "[37m"
+
 static plog_lock_fn gp_lock_fn        =  NULL; // Calls the lock function
                                                // (if not NULL)
 static void*        gp_lock_user_data = NULL;  // Passed to the lock function on
@@ -60,6 +65,7 @@ static bool         gb_level          = true;  // True is level reporting is on
 static plog_level_t g_log_level       = PLOG_LEVEL_INFO; // Logger level
 static bool         gb_file           = false; // True if filenames/lines are on
 static bool         gb_func           = false; // True if function names are on
+static bool         gb_colors         = false; // True if colors are enabled
 
 static size_t g_appender_count = 0; // Number of registered appenders
 
@@ -75,6 +81,11 @@ static const char* const level_str[] =
     "ERROR",
     "FATAL",
     0
+};
+
+static const char *level_color[] =
+{
+  "\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m", 0
 };
 
 /*
@@ -143,6 +154,16 @@ void
 plog_disable ()
 {
     gb_enabled = false;
+}
+
+void plog_colors_enable()
+{
+    gb_colors = true;
+}
+
+void plog_colors_disable()
+{
+    gb_colors = false;
 }
 
 void plog_set_lock(plog_lock_fn p_lock, void* p_user_data)
@@ -359,7 +380,8 @@ plog_write (plog_level_t level, const char* file, unsigned line,
     {
         char p_time_str[PLOG_TIMESTAMP_LEN];
         char p_tmp_str[PLOG_TIMESTAMP_LEN];
-        snprintf(p_time_str, sizeof(p_time_str), "[%s] ",
+
+        snprintf(p_time_str, sizeof(p_time_str), "%s ",
                  time_str(p_tmp_str, sizeof(p_tmp_str)));
 
         strncat(p_entry_str, p_time_str, sizeof(p_entry_str) - 1);
@@ -369,7 +391,19 @@ plog_write (plog_level_t level, const char* file, unsigned line,
     if (gb_level)
     {
         char p_level_str[PLOG_LEVEL_LEN];
-        snprintf(p_level_str, sizeof(p_level_str), "[%s] ", level_str[level]);
+
+        if (gb_colors)
+        {
+            snprintf(p_level_str, sizeof(p_level_str), "%c%s%s %c%s",
+            PLOG_TERM_CODE, level_color[level],
+            level_str[level],
+            PLOG_TERM_CODE, PLOG_TERM_RESET);
+        }
+        else
+        {
+            snprintf(p_level_str, sizeof(p_level_str), "%s ", level_str[level]);
+        }
+
         strncat(p_entry_str, p_level_str, sizeof(p_entry_str) - 1);
     }
 
@@ -377,7 +411,20 @@ plog_write (plog_level_t level, const char* file, unsigned line,
     if (gb_file)
     {
         char p_file_str[PLOG_FILE_LEN];
-        snprintf(p_file_str, sizeof(p_file_str), "[%s:%u] ", file, line);
+
+        if (gb_colors)
+        {
+            snprintf(p_file_str, sizeof(p_file_str), "%c%s%s:%u%c%s ",
+                     PLOG_TERM_CODE, PLOG_TERM_GRAY,
+                     file, line,
+                     PLOG_TERM_CODE, PLOG_TERM_RESET);
+
+        }
+        else
+        {
+            snprintf(p_file_str, sizeof(p_file_str), "%s:%u ", file, line);
+        }
+
         strncat(p_entry_str, p_file_str, sizeof(p_entry_str) - 1);
     }
 
@@ -385,7 +432,19 @@ plog_write (plog_level_t level, const char* file, unsigned line,
     if (gb_func)
     {
         char p_func_str[PLOG_FUNC_LEN];
-        snprintf(p_func_str, sizeof(p_func_str), "[%s] ", func);
+
+        if (gb_colors)
+        {
+            snprintf(p_func_str, sizeof(p_func_str), "%c%s[%s] %c%s",
+                     PLOG_TERM_CODE, PLOG_TERM_GRAY,
+                     func,
+                     PLOG_TERM_CODE, PLOG_TERM_RESET);
+        }
+        else
+        {
+            snprintf(p_func_str, sizeof(p_func_str), "[%s] ", func);
+        }
+
         strncat(p_entry_str, p_func_str, sizeof(p_entry_str) - 1);
     }
 

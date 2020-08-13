@@ -28,7 +28,10 @@
 
 int main(int argc, char** argv)
 {
-    plog_appender_register_stream(stdout, PLOG_LEVEL_INFO);
+    plog_colors_enable();
+
+    plog_appender_register_stream(stdout, PLOG_LEVEL_TRACE);
+    plog_set_level(PLOG_LEVEL_TRACE);
 
     plog_turn_timestamp_on();
     plog_turn_file_on();
