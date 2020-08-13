@@ -34,7 +34,7 @@ Registers a lock function that is called while writing to the log. **NOTE:** Off
 
 - `p_userdata` - User data that is supplied to the lock function during execution.
 
-#### plog_appender_register(p_appender, level, p_user_data)
+#### plog_add_appender(p_appender, level, p_user_data)
 
 Registers (adds appender to logger) and enables the specified appender. An
 appender writes a log entry to an output stream. This could be a console,
@@ -53,7 +53,7 @@ a file, a network connection, etc...
 **returns**       An identifier for the appender. This ID is valid until the
                   appender is unregistered.
 
-#### plog_appender_register_steam(stream, level)
+#### plog_add_stream(p_stream, level)
 
 Registers an output stream appender.
 
@@ -64,20 +64,20 @@ Registers an output stream appender.
 **returns** An identifier for the appender. This ID is valid until the
             appender is unregistered.
 
-#### plog_appender_unregister(id)
+#### plog_remove_appender(id)
 
 Unregisters appender (removes the appender from the logger).
 
 - `id` - The appender to unreqister
 
-#### plog_appender_enable(id)
+#### plog_enable_appender(id)
 
 Enables the specified appender. **NOTE:** Appenders are enabled by default after
 registration.
 
 - `id` - The appender to enable
 
-#### plog_appender_disable(id)
+#### plog_disable_appender(id)
 
 Disables the specified appender.
 

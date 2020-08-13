@@ -126,9 +126,9 @@ void plog_set_lock(plog_lock_fn p_lock, void* p_user_data);
  * @return            An identifier for the appender. This ID is valid until the
  *                    appender is unregistered.
  */
-plog_id_t plog_appender_register(plog_appender_fn p_appender,
-                                 plog_level_t level,
-                                 void* p_user_data);
+plog_id_t plog_add_appender(plog_appender_fn p_appender,
+                            plog_level_t level,
+                            void* p_user_data);
 
 /**
  * Registers an output stream appender.
@@ -140,14 +140,14 @@ plog_id_t plog_appender_register(plog_appender_fn p_appender,
  * @return       An identifier for the appender. This ID is valid until the
  *               appender is unregistered.
  */
-plog_id_t plog_appender_register_stream(FILE* stream, plog_level_t level);
+plog_id_t plog_add_stream(FILE* p_stream, plog_level_t level);
 
 /**
  * Unregisters appender (removes the appender from the logger).
  *
  * @param id The appender to unregister
  */
-void plog_appender_unregister(plog_id_t id);
+void plog_remove_appender(plog_id_t id);
 
 /**
  * Enables the specified appender. NOTE: Appenders are enabled by default
@@ -155,14 +155,14 @@ void plog_appender_unregister(plog_id_t id);
  *
  * @param id The appender to enable.
  */
-void plog_appender_enable(plog_id_t id);
+void plog_enable_appender(plog_id_t id);
 
 /**
  * Disables the specified appender.
  *
  * @param id The appender to disable
  */
-void plog_appender_disable(plog_id_t id);
+void plog_disable_appender(plog_id_t id);
 
 /**
  * Sets the logging level. Only those messages of equal or higher priority
@@ -171,8 +171,6 @@ void plog_appender_disable(plog_id_t id);
  * @param level The new global logging threshold.
  */
 void plog_set_level(plog_level_t level);
-
-
 
 /**
  * Writes a TRACE level message to the log. Usage is similar to printf (i.e.

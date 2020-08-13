@@ -33,7 +33,7 @@ void appender(const char* p_msg, void* p_user_data)
 
 int main(int argc, char** argv)
 {
-    plog_appender_register(appender, PLOG_LEVEL_INFO, NULL);
+    plog_add_appender(appender, PLOG_LEVEL_INFO, NULL);
 
     plog_turn_timestamp_on();
     plog_turn_file_on();

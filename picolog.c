@@ -52,7 +52,6 @@
 #define PLOG_TERM_CODE        0x1B
 #define PLOG_TERM_RESET      "[0m"
 #define PLOG_TERM_GRAY       "[90m"
-#define PLOG_TERM_WHITE      "[37m"
 
 static plog_lock_fn gp_lock           =  NULL; // Calls the lock function
                                                // (if not NULL)
@@ -65,7 +64,6 @@ static bool         gb_level          = true;  // True is level reporting is on
 static plog_level_t g_log_level       = PLOG_LEVEL_INFO; // Logger level
 static bool         gb_file           = false; // True if filenames/lines are on
 static bool         gb_func           = false; // True if function names are on
-static bool         gb_colors         = false; // True if colors are enabled
 
 static size_t g_appender_count = 0; // Number of registered appenders
 
@@ -170,7 +168,7 @@ void plog_set_lock(plog_lock_fn p_lock, void* p_user_data)
 }
 
 plog_id_t
-plog_appender_register (plog_appender_fn p_appender,
+plog_add_appender (plog_appender_fn p_appender,
                         plog_level_t level,
                         void* p_user_data)
 {
@@ -206,7 +204,7 @@ plog_appender_register (plog_appender_fn p_appender,
 }
 
 static void
-plog_stream_appender (const char* p_entry, void* p_user_data)
+stream_appender (const char* p_entry, void* p_user_data)
 {
     FILE* stream = (FILE*)p_user_data;
     fprintf(stream, "%s\n", p_entry);
@@ -214,7 +212,7 @@ plog_stream_appender (const char* p_entry, void* p_user_data)
 }
 
 plog_id_t
-plog_appender_register_stream (FILE* stream, plog_level_t level)
+plog_add_stream (FILE* stream, plog_level_t level)
 {
     // Stream must not be NULL
     PLOG_ASSERT(NULL != stream);
@@ -222,11 +220,11 @@ plog_appender_register_stream (FILE* stream, plog_level_t level)
     // Ensure level is valid
     PLOG_ASSERT(level >= 0 && level < PLOG_LEVEL_COUNT);
 
-    return plog_appender_register(plog_stream_appender, level, stream);
+    return plog_add_appender(stream_appender, level, stream);
 }
 
 void
-plog_appender_unregister (plog_id_t id)
+plog_remove_appender (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -244,11 +242,11 @@ plog_appender_unregister (plog_id_t id)
     gp_appenders[id].b_enabled   = false;
     gp_appenders[id].b_colors    = false;
 
-    g_appender_count -= 1;
+    g_appender_count--;
 }
 
 void
-plog_appender_enable (plog_id_t id)
+plog_enable_appender (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -264,7 +262,7 @@ plog_appender_enable (plog_id_t id)
 }
 
 void
-plog_appender_disable (plog_id_t id)
+plog_disable_appender (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -388,7 +386,7 @@ append_timestamp (char* p_entry_str)
     snprintf(p_time_str, sizeof(p_time_str), "%s ",
              time_str(p_tmp_str, sizeof(p_tmp_str)));
 
-    strncat(p_entry_str, p_time_str, PLOG_ENTRY_LEN - 1);
+    strncat(p_entry_str, p_time_str, PLOG_ENTRY_LEN);
 }
 
 static void
@@ -408,7 +406,7 @@ append_level (char* p_entry_str, plog_level_t level, bool b_colors)
         snprintf(p_level_str, sizeof(p_level_str), "%s ", level_str[level]);
     }
 
-    strncat(p_entry_str, p_level_str, PLOG_ENTRY_LEN - 1);
+    strncat(p_entry_str, p_level_str, PLOG_ENTRY_LEN);
 }
 
 static void
@@ -429,7 +427,7 @@ append_file(char* p_entry_str, const char* file, unsigned line, bool b_colors)
         snprintf(p_file_str, sizeof(p_file_str), "%s:%u ", file, line);
     }
 
-    strncat(p_entry_str, p_file_str, PLOG_ENTRY_LEN - 1);
+    strncat(p_entry_str, p_file_str, PLOG_ENTRY_LEN);
 }
 
 static void
@@ -449,7 +447,7 @@ append_func(char* p_entry_str, const char* func, bool b_colors)
         snprintf(p_func_str, sizeof(p_func_str), "[%s] ", func);
     }
 
-    strncat(p_entry_str, p_func_str, PLOG_ENTRY_LEN - 1);
+    strncat(p_entry_str, p_func_str, PLOG_ENTRY_LEN);
 }
 
 void
@@ -478,7 +476,9 @@ plog_write (plog_level_t level, const char* file, unsigned line,
             g_log_level <= gp_appenders[i].level &&
             g_log_level <= level)
         {
-            char p_entry_str[PLOG_ENTRY_LEN + 1]; // Ensure there is space for null char
+            char p_entry_str[PLOG_ENTRY_LEN + 1]; // Ensure there is space for
+                                                  // null char
+
             p_entry_str[0] = '\0'; // Ensure the entry is null terminated
 
             // Append a timestamp

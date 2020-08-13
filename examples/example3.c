@@ -28,7 +28,7 @@
 
 int main(int argc, char** argv)
 {
-    plog_id_t id = plog_appender_register_stream(stdout, PLOG_LEVEL_TRACE);
+    plog_id_t id = plog_add_stream(stdout, PLOG_LEVEL_TRACE);
     plog_turn_colors_on(id);
 
     plog_set_level(PLOG_LEVEL_TRACE);
