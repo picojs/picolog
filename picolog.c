@@ -91,7 +91,7 @@ static const char* const level_str[] =
 // Appropriated from https://github.com/rxi/log.c (MIT licensed)
 static const char* level_color[] =
 {
-    "\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m", 0
+    "[94m", "[36m", "[32m", "[33m", "[31m", "[35m", NULL
 };
 
 /*
