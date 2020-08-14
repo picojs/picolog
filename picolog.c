@@ -38,9 +38,9 @@
  * generous powers of 2 for the sake of safety and simplicity.
  */
 
-#define PLOG_TIMESTAMP_LEN 32
+#define PLOG_TIMESTAMP_LEN 64
 #define PLOG_LEVEL_LEN     32
-#define PLOG_FILE_LEN      2048
+#define PLOG_FILE_LEN      256
 #define PLOG_FUNC_LEN      32
 #define PLOG_MSG_LEN       PLOG_MAX_MSG_LENGTH
 #define PLOG_BREAK_LEN     1
@@ -125,11 +125,8 @@ try_init ()
 
     for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
-        gp_appenders[i].p_appender  = NULL;
-        gp_appenders[i].level       = PLOG_LEVEL_INFO;
-        gp_appenders[i].p_user_data = NULL;
-        gp_appenders[i].b_enabled   = false;
-        gp_appenders[i].b_colors    = false;
+        gp_appenders[i].p_appender = NULL;
+        gp_appenders[i].b_enabled  = false;
     }
 
     strncpy(gp_time_fmt, PLOG_TIME_FMT, PLOG_TIME_FMT_LEN);
@@ -246,11 +243,8 @@ plog_remove_appender (plog_id_t id)
     PLOG_ASSERT(NULL != gp_appenders[id].p_appender);
 
     // Reset appender with given ID
-    gp_appenders[id].p_appender  = NULL;
-    gp_appenders[id].level       = PLOG_LEVEL_INFO;
-    gp_appenders[id].p_user_data = NULL;
-    gp_appenders[id].b_enabled   = false;
-    gp_appenders[id].b_colors    = false;
+    gp_appenders[id].p_appender = NULL;
+    gp_appenders[id].b_enabled  = false;
 
     g_appender_count--;
 }

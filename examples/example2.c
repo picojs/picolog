@@ -29,11 +29,13 @@
 void appender1(const char* p_msg, void* p_user_data)
 {
     printf("Appender 1: %s", p_msg);
+    fflush(stdout);
 }
 
 void appender2(const char* p_msg, void* p_user_data)
 {
     printf("Appender 2: %s", p_msg);
+    fflush(stdout);
 }
 
 void log_all()
@@ -48,9 +50,8 @@ void log_all()
 
 int main(int argc, char** argv)
 {
-    plog_add_appender(appender1, PLOG_LEVEL_TRACE, NULL);
-
-    plog_id_t id = plog_add_appender(appender2, PLOG_LEVEL_INFO, NULL);
+    plog_id_t id1 = plog_add_appender(appender1, PLOG_LEVEL_TRACE, NULL);
+    plog_id_t id2 = plog_add_appender(appender2, PLOG_LEVEL_INFO, NULL);
 
     plog_set_level(PLOG_LEVEL_TRACE);
 
@@ -60,7 +61,7 @@ int main(int argc, char** argv)
 
     printf("================== One appender ==================\n");
 
-    plog_disable_appender(id);
+    plog_disable_appender(id1);
     log_all();
 
     printf("================== Level Off ==================\n");
@@ -70,12 +71,16 @@ int main(int argc, char** argv)
 
     printf("================== Level On/Set Level (INFO) ==================\n");
 
-    plog_enable_appender(id);
+    plog_enable_appender(id1);
     plog_turn_level_on();
     plog_set_level(PLOG_LEVEL_INFO);
     log_all();
 
+    plog_remove_appender(id2);
+
     printf("================== Timestamp ==================\n");
+
+    id2 = plog_add_appender(appender2, PLOG_LEVEL_INFO, NULL);
 
     plog_turn_timestamp_on();
     log_all();

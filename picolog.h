@@ -50,7 +50,7 @@ extern "C" {
 #endif
 
 #ifndef PLOG_MAX_MSG_LENGTH
-#define PLOG_MAX_MSG_LENGTH 2048
+#define PLOG_MAX_MSG_LENGTH 1024
 #endif
 
 #ifndef PLOG_ASSERT
@@ -79,7 +79,8 @@ typedef enum
 typedef void (*plog_appender_fn)(const char* p_entry, void* p_user_data);
 
 /**
- *  Lock function definition. This is called during plog_write.
+ *  Lock function definition. This is called during plog_write. Adapted
+    from https://github.com/rxi/log.c/blob/master/src/log.h
  */
 typedef void (*plog_lock_fn)(bool lock, void *p_user_data);
 
@@ -222,7 +223,7 @@ void plog_set_level(plog_level_t level);
 void plog_turn_colors_on(plog_id_t id);
 
 /**
- *  Turns colors ouput off for the specified appender.
+ *  Turns colors ouput on for the specified appender.
  *
  *  @param id The appender id
  */
