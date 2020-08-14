@@ -223,7 +223,7 @@ void plog_set_level(plog_level_t level);
 void plog_turn_colors_on(plog_id_t id);
 
 /**
- *  Turns colors ouput on for the specified appender.
+ *  Turns colors ouput off for the specified appender.
  *
  *  @param id The appender id
  */
