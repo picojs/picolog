@@ -81,7 +81,7 @@ typedef void (*plog_appender_fn)(const char* p_entry, void* p_user_data);
 /**
  *  Lock function definition. This is called during plog_write.
  */
-typedef void (*plog_lock_fn)(void *p_user_data);
+typedef void (*plog_lock_fn)(bool lock, void *p_user_data);
 
 /**
  * Identifies a registered appender.
