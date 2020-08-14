@@ -39,18 +39,18 @@
  */
 
 #define PLOG_TIMESTAMP_LEN 32
-#define PLOG_LEVEL_LEN     16
-#define PLOG_FILE_LEN      4096 // PATH_MAX on Linux
+#define PLOG_LEVEL_LEN     32
+#define PLOG_FILE_LEN      2048
 #define PLOG_FUNC_LEN      32
 #define PLOG_MSG_LEN       PLOG_MAX_MSG_LENGTH
 #define PLOG_MSG_BREAK_LEN 1
 
-#define PLOG_ENTRY_LEN     (PLOG_TIMESTAMP_LEN + \
-                           PLOG_LEVEL_LEN      + \
-                           PLOG_FILE_LEN       + \
-                           PLOG_FUNC_LEN       + \
-                           PLOG_MSG_LEN        + \
-                           PLOG_MSG_BREAK_LEN)
+#define PLOG_ENTRY_LEN     (PLOG_TIMESTAMP_LEN  + \
+                            PLOG_LEVEL_LEN      + \
+                            PLOG_FILE_LEN       + \
+                            PLOG_FUNC_LEN       + \
+                            PLOG_MSG_LEN        + \
+                            PLOG_MSG_BREAK_LEN)
 
 #define PLOG_TIME_FMT_LEN 32
 #define PLOG_TIME_FMT     "%d/%m/%g %H:%M:%S"
@@ -91,7 +91,7 @@ static const char* const level_str[] =
 // Appropriated from https://github.com/rxi/log.c (MIT licensed)
 static const char* level_color[] =
 {
-  "\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m", 0
+    "\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m", 0
 };
 
 /*
@@ -200,6 +200,7 @@ plog_add_appender (plog_appender_fn p_appender,
             gp_appenders[i].level       = level;
             gp_appenders[i].p_user_data = p_user_data;
             gp_appenders[i].b_enabled   = true;
+            gp_appenders[i].b_colors    = false;
 
             g_appender_count++;
 

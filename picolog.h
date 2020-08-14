@@ -36,7 +36,7 @@
 #include <stdarg.h>  // ...
 #include <stdbool.h> // bool, true, false
 #include <stddef.h>  // NULL, size_t
-#include <stdio.h>    // FILE
+#include <stdio.h>   // FILE
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,7 +50,7 @@ extern "C" {
 #endif
 
 #ifndef PLOG_MAX_MSG_LENGTH
-#define PLOG_MAX_MSG_LENGTH 4096
+#define PLOG_MAX_MSG_LENGTH 2048
 #endif
 
 #ifndef PLOG_ASSERT
