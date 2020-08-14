@@ -40,7 +40,7 @@
 
 #define PLOG_TIMESTAMP_LEN 64
 #define PLOG_LEVEL_LEN     32
-#define PLOG_FILE_LEN      256
+#define PLOG_FILE_LEN      512
 #define PLOG_FUNC_LEN      32
 #define PLOG_MSG_LEN       PLOG_MAX_MSG_LENGTH
 #define PLOG_BREAK_LEN     1
