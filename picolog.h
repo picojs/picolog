@@ -238,42 +238,42 @@ void plog_set_time_fmt(plog_id_t id, const char* fmt);
 /**
  * Turns timestamp reporting on. NOTE: Off by default.
  */
-void plog_turn_timestamp_on();
+void plog_turn_timestamp_on(plog_id_t id);
 
 /**
  * Turns timestamp reporting off.
  */
-void plog_turn_timestamp_off();
+void plog_turn_timestamp_off(plog_id_t id);
 
 /**
  * Turns log level reporting on. NOTE: On by default.
  */
-void plog_turn_level_on();
+void plog_turn_level_on(plog_id_t id);
 
 /**
  * Turns log level reporting off.
  */
-void plog_turn_level_off();
+void plog_turn_level_off(plog_id_t id);
 
 /**
  * Turns filename/line number reporting on. NOTE: Off by default.
  */
-void plog_turn_file_on();
+void plog_turn_file_on(plog_id_t id);
 
 /**
  * Turns filename/line number reporting off.
  */
-void plog_turn_file_off();
+void plog_turn_file_off(plog_id_t id);
 
 /**
  * Turns function name reporting on. NOTE: Off by default.
  */
-void plog_turn_func_on();
+void plog_turn_func_on(plog_id_t id);
 
 /**
  * Turns function name reporting off.
  */
-void plog_turn_func_off();
+void plog_turn_func_off(plog_id_t id);
 
 /**
  * WARNING: It is inadvisable to call this function directly. Use the macros

@@ -30,6 +30,7 @@ void appender(const char* p_msg, void* p_user_data)
 {
     (void)p_user_data;
     printf("%s", p_msg);
+    fflush(stdout);
 }
 
 int main(int argc, char** argv)
@@ -37,11 +38,11 @@ int main(int argc, char** argv)
     (void)argc;
     (void)argv;
 
-    plog_add_appender(appender, PLOG_LEVEL_INFO, NULL);
+    plog_id_t id = plog_add_appender(appender, PLOG_LEVEL_INFO, NULL);
 
-    plog_turn_timestamp_on();
-    plog_turn_file_on();
-    plog_turn_func_on();
+    plog_turn_timestamp_on(id);
+    plog_turn_file_on(id);
+    plog_turn_func_on(id);
 
     // Default log level is INFO
 

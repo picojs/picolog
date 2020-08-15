@@ -21,7 +21,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 =============================================================================*/
-
+/*
 #include <picolog.h>
 
 #include <stdio.h>
@@ -100,5 +100,13 @@ int main(int argc, char** argv)
     plog_turn_func_on();
     log_all();
 
+    return 0;
+}*/
+
+
+int main(int argc, char** argv)
+{
+    (void)argc;
+    (void)argv;
     return 0;
 }

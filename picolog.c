@@ -201,8 +201,15 @@ plog_add_appender (plog_appender_fn p_appender,
             gp_appenders[i].p_appender  = p_appender;
             gp_appenders[i].level       = level;
             gp_appenders[i].p_user_data = p_user_data;
+            gp_appenders[i].level       = PLOG_LEVEL_INFO;
             gp_appenders[i].b_enabled   = true;
             gp_appenders[i].b_colors    = false;
+            gp_appenders[i].b_level     = true;
+            gp_appenders[i].b_timestamp = false;
+            gp_appenders[i].b_file      = false;
+            gp_appenders[i].b_func      = false;
+
+            strncpy(gp_appenders[i].p_time_fmt, PLOG_TIME_FMT, PLOG_TIME_FMT_LEN);
 
             g_appender_count++;
 
@@ -293,6 +300,19 @@ plog_set_level (plog_id_t id, plog_level_t level)
 }
 
 void
+plog_set_time_fmt (plog_id_t id, const char* fmt)
+{
+    // Initialize logger if neccesary
+    try_init();
+
+    // Ensure appender is registered
+    PLOG_ASSERT(appender_exists(id));
+
+    // Copy the time string
+    strncpy(gp_appenders[id].p_time_fmt, fmt, PLOG_TIME_FMT_LEN);
+}
+
+void
 plog_turn_colors_on (plog_id_t id)
 {
     // Initialize logger if neccesary
@@ -319,19 +339,6 @@ plog_turn_colors_off (plog_id_t id)
 }
 
 void
-plog_set_time_fmt (plog_id_t id, const char* fmt)
-{
-    // Initialize logger if neccesary
-    try_init();
-
-    // Ensure appender is registered
-    PLOG_ASSERT(appender_exists(id));
-
-    // Copy the time string
-    strncpy(gp_appenders[id].p_time_fmt, fmt, PLOG_TIME_FMT_LEN);
-}
-
-void
 plog_turn_timestamp_on (plog_id_t id)
 {
     // Initialize logger if neccesary
@@ -340,6 +347,7 @@ plog_turn_timestamp_on (plog_id_t id)
     // Ensure appender is registered
     PLOG_ASSERT(appender_exists(id));
 
+    // Turn timestamp on
     gp_appenders[id].b_timestamp = true;
 }
 
@@ -352,6 +360,7 @@ plog_turn_timestamp_off (plog_id_t id)
     // Ensure appender is registered
     PLOG_ASSERT(appender_exists(id));
 
+    // Turn timestamp off
     gp_appenders[id].b_timestamp = false;
 }
 
@@ -376,7 +385,7 @@ plog_turn_level_off (plog_id_t id)
     // Ensure appender is registered
     PLOG_ASSERT(appender_exists(id));
 
-    // Turn level reporting on
+    // Turn level reporting off
     gp_appenders[id].b_level = false;
 }
 
