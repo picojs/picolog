@@ -88,7 +88,6 @@ Disables the specified appender.
 
 Sets the logging level. Only those messages of equal or higher priority
 (severity) than this value will be logged.
-**NOTE:** PLOG_LEVEL_INFO by default.
 
 - `level` - The new appender logging threshold.
 - `id`    - The appender
@@ -228,11 +227,11 @@ void appender(const char* p_msg, void* p_user_data)
 
 int main(int argc, char** argv)
 {
-    plog_appender_register(appender, PLOG_LEVEL_INFO, NULL);
+    plog_id_t id = plog_add_appender(appender, PLOG_LEVEL_INFO, NULL);
 
-    plog_timestamp_on();
-    plog_file_on();
-    plog_func_on();
+    plog_timestamp_on(id);
+    plog_file_on(id);
+    plog_func_on(id);
 
     // Default log level is INFO
 

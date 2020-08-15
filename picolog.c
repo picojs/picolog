@@ -250,9 +250,6 @@ plog_add_stream (FILE* stream, plog_level_t level)
     // Stream must not be NULL
     PLOG_ASSERT(NULL != stream);
 
-    // Ensure level is valid
-    PLOG_ASSERT(level >= 0 && level < PLOG_LEVEL_COUNT);
-
     return plog_add_appender(stream_appender, level, stream);
 }
 

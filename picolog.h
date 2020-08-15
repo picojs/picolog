@@ -183,7 +183,8 @@ void plog_set_level(plog_id_t id, plog_level_t level);
 void plog_set_time_fmt(plog_id_t id, const char* fmt);
 
 /**
- * Turns color ouput on for the specified appender. NOTE: Off by default.
+ * Turns color ouput on for the specified appender.
+ * NOTE: Off by default.
  *
  * @param id The appender id
  */
