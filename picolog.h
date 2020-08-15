@@ -171,7 +171,7 @@ void plog_disable_appender(plog_id_t id);
  *
  * @param level The new global logging threshold.
  */
-void plog_set_level(plog_level_t level);
+void plog_set_level(plog_id_t id, plog_level_t level);
 
 /**
  * Writes a TRACE level message to the log. Usage is similar to printf (i.e.
@@ -233,7 +233,7 @@ void plog_turn_colors_off(plog_id_t id);
  * Sets the log timestamp format according to:
  * https://man7.org/linux/man-pages/man3/strftime.3.html
  */
-void plog_set_time_fmt(const char* fmt);
+void plog_set_time_fmt(plog_id_t id, const char* fmt);
 
 /**
  * Turns timestamp reporting on. NOTE: Off by default.
