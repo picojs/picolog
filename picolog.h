@@ -177,8 +177,8 @@ void plog_set_level(plog_id_t id, plog_level_t level);
  * Sets the appender timestamp format according to:
  * https://man7.org/linux/man-pages/man3/strftime.3.html
  *
- *  @param id The appender id
- *  @param fmt The time format
+ * @param id The appender id
+ * @param fmt The time format
  */
 void plog_set_time_fmt(plog_id_t id, const char* fmt);
 
@@ -232,7 +232,6 @@ void plog_level_off(plog_id_t id);
  * NOTE: Off by default.
  *
  * @param id The appender id
- *
  */
 void plog_file_on(plog_id_t id);
 
@@ -240,7 +239,6 @@ void plog_file_on(plog_id_t id);
  * Turns filename/line number reporting off for the specified appender.
  *
  * @param id The appender id
- *
  */
 void plog_file_off(plog_id_t id);
 
@@ -249,7 +247,6 @@ void plog_file_off(plog_id_t id);
  * NOTE: Off by default.
  *
  * @param id The appender id
- *
  */
 void plog_func_on(plog_id_t id);
 
