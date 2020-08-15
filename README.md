@@ -12,7 +12,8 @@ Features:
 - Simple and minimalistic API
 - Flexible and extensible appender handling
 - Ability to set logging level (TRACE, DEBUG, INFO, WARN, ERROR, and FATAL)
-- Ability to toggle date/time, level, filename/line, and function reporting
+- Ability to toggle date/time, log level, filename/line, and function reporting
+  on a per appender basis
 - MIT licensed
 
 API:
@@ -72,8 +73,8 @@ Unregisters appender (removes the appender from the logger).
 
 #### plog_enable_appender(id)
 
-Enables the specified appender. **NOTE:** Appenders are enabled by default after
-registration.
+Enables the specified appender.
+**NOTE:** Appenders are enabled by default afterregistration.
 
 - `id` - The appender to enable
 
@@ -83,12 +84,86 @@ Disables the specified appender.
 
 - `id` - The appender to disable
 
-#### plog_set_level(level)
+#### plog_set_level(id, level)
 
 Sets the logging level. Only those messages of equal or higher priority
 (severity) than this value will be logged.
+**NOTE:** PLOG_LEVEL_INFO by default.
 
-- `level` - The new global logging threshold.
+- `level` - The new appender logging threshold.
+- `id`    - The appender
+
+#### plog_set_time_fmt(id, fmt)
+Sets the appender timestamp format according to: 
+https://man7.org/linux/man-pages/man3/strftime.3.html
+
+- `id`  - The appender id
+- `fmt` - The time format
+
+#### plog_colors_on(id)
+
+Turns color output on for the specified appender. NOTE: Off by default.
+**NOTE:** Off by default.
+
+- `id`     - The appender id
+
+#### plog_colors_off(id)
+
+Turns color ouput off for the specified appender.
+
+- `id`     - The appender id
+
+#### plog_timestamp_on(id)
+
+Turns timestamp reporting on. 
+**NOTE:** Off by default.
+
+- `id`     - The appender id
+
+#### plog_timestamp_off(id)
+
+Turns timestamp reporting off for the specified appender.
+
+- `id`     - The appender id
+
+#### plog_level_on(id)
+
+Turns log level reporting on for the specified appender. 
+**NOTE:** On by default.
+
+- `id`     - The appender id
+
+#### plog_level_off(id)
+
+Turns log level reporting off for the specified appender.
+
+- `id`     - The appender id
+
+#### plog_file_on(id)
+
+Turns filename/line number reporting on for the specified appender. 
+**NOTE:** Off by default.
+
+- `id`     - The appender id
+
+#### plog_file_off(id)
+
+Turns filename/line number reporting off for the specified appender.
+
+- `id`     - The appender id
+
+#### plog_func_on(id)
+
+Turns function name reporting on for the specified appender. 
+**NOTE:** Off by default.
+
+- `id`     - The appender id
+
+#### plog_func_off(id)
+
+Turns function name reporting off for the specified appender.
+
+- `id`     - The appender id
 
 #### plog_trace(fmt, args...)
 
@@ -138,50 +213,6 @@ printf.
 - `fmt`     - Message format
 - `args...` - Format specifiers
 
-#### plog_turn_colors_on(id)
-
-Turns color output on for the specified appender. NOTE: Off by default.
-
-- `id`     - The appender id
-
-#### plog_turn_colors_off()
-
-Turns color ouput off for the specified appender.
-
-- `id`     - The appender id
-
-#### plog_turn_timestamp_on()
-
-Turns timestamp reporting on. **NOTE:** Off by default.
-
-#### plog_turn_timestamp_off()
-
-Turns timestamp reporting off.
-
-#### plog_turn_level_on()
-
-Turns log level reporting on. **NOTE:** On by default.
-
-#### plog_turn_level_off()
-
-Turns log level reporting off
-
-#### plog_turn_file_on()
-
-Turns filename/line number reporting on. **NOTE:** Off by default.
-
-#### plog_turn_file_off()
-
-Turns filename/line number reporting off.
-
-#### plog_turn_func_on()
-
-Turns function name reporting on. **NOTE:** Off by default.
-
-#### plog_turn_func_off()
-
-Turns function name reporting off.
-
 Example:
 --------
 
@@ -199,9 +230,9 @@ int main(int argc, char** argv)
 {
     plog_appender_register(appender, PLOG_LEVEL_INFO, NULL);
 
-    plog_turn_timestamp_on();
-    plog_turn_file_on();
-    plog_turn_func_on();
+    plog_timestamp_on();
+    plog_file_on();
+    plog_func_on();
 
     // Default log level is INFO
 

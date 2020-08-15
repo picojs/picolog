@@ -169,9 +169,18 @@ void plog_disable_appender(plog_id_t id);
  * Sets the logging level. Only those messages of equal or higher priority
  * (severity) than this value will be logged.
  *
- * @param level The new global logging threshold.
+ * @param level The new appender logging threshold.
  */
 void plog_set_level(plog_id_t id, plog_level_t level);
+
+/**
+ * Sets the appender timestamp format according to:
+ * https://man7.org/linux/man-pages/man3/strftime.3.html
+ *
+ *  @param id The appender id
+ *  @param fmt The time format
+ */
+void plog_set_time_fmt(plog_id_t id, const char* fmt);
 
 /**
  *  Turns color ouput on for the specified appender. NOTE: Off by default.
@@ -188,48 +197,67 @@ void plog_colors_on(plog_id_t id);
 void plog_colors_off(plog_id_t id);
 
 /**
- * Sets the log timestamp format according to:
- * https://man7.org/linux/man-pages/man3/strftime.3.html
- */
-void plog_set_time_fmt(plog_id_t id, const char* fmt);
-
-/**
- * Turns timestamp reporting on. NOTE: Off by default.
+ * Turns timestamp reporting off for the specified appender.
+ * NOTE: Off by default
+ *
+ * @param id The appender id
  */
 void plog_timestamp_on(plog_id_t id);
 
 /**
- * Turns timestamp reporting off.
+ * Turns timestamp reporting off for the specified appender.
+ *
+ * @param id The appender id
+ *
  */
 void plog_timestamp_off(plog_id_t id);
 
 /**
- * Turns log level reporting on. NOTE: On by default.
+ * Turns log level reporting on for the specified appender.
+ * NOTE: On by default.
+ *
+ * @param id The appender id
+ *
  */
 void plog_level_on(plog_id_t id);
 
 /**
- * Turns log level reporting off.
+ * Turns level reporting off for the specified appender.
+ *
+ * @param id The appender id
  */
 void plog_level_off(plog_id_t id);
 
 /**
- * Turns filename/line number reporting on. NOTE: Off by default.
+ * Turns filename and line number reporting on for the specified appender.
+ * NOTE: Off by default.
+ *
+ * @param id The appender id
+ *
  */
 void plog_file_on(plog_id_t id);
 
 /**
- * Turns filename/line number reporting off.
+ * Turns filename/line number reporting off for the specified appender.
+ *
+ * @param id The appender id
+ *
  */
 void plog_file_off(plog_id_t id);
 
 /**
- * Turns function name reporting on. NOTE: Off by default.
+ * Turns function reporting on for the specified appender.
+ * NOTE: Off by default.
+ *
+ * @param id The appender id
+ *
  */
 void plog_func_on(plog_id_t id);
 
 /**
- * Turns function name reporting off.
+ * Turns function reporting off for the specified appender.
+ *
+ * @param id The appender id
  */
 void plog_func_off(plog_id_t id);
 
