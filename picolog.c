@@ -75,6 +75,20 @@ static const char* const level_str[] =
 {
     "TRACE",
     "DEBUG",
+    "INFO",
+    "WARN",
+    "ERROR",
+    "FATAL",
+    0
+};
+
+/*
+ * Logger level strings indexed by level ID (plog_level_t).
+ */
+static const char* const level_str_formatted[] =
+{
+    "TRACE",
+    "DEBUG",
     "INFO ",
     "WARN ",
     "ERROR",
@@ -476,7 +490,7 @@ append_level (char* p_entry_str, plog_level_t level, bool b_colors)
     {
         snprintf(p_level_str, sizeof(p_level_str), "%c%s%s %c%s",
         PLOG_TERM_CODE, level_color[level],
-        level_str[level],
+        level_str_formatted[level],
         PLOG_TERM_CODE, PLOG_TERM_RESET);
     }
     else
