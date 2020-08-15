@@ -74,6 +74,7 @@ int main(int argc, char** argv)
 
     plog_turn_level_off(id1);
     plog_turn_level_off(id2);
+
     log_all();
 
     printf("================== Level On/Set Level (INFO) ==================\n");
@@ -103,6 +104,7 @@ int main(int argc, char** argv)
 
     plog_turn_file_on(id1);
     plog_turn_file_on(id2);
+
     log_all();
 
     printf("================== Func ==================\n");
