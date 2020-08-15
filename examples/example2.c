@@ -21,7 +21,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 =============================================================================*/
-/*
+
 #include <picolog.h>
 
 #include <stdio.h>
@@ -58,7 +58,8 @@ int main(int argc, char** argv)
     plog_id_t id1 = plog_add_appender(appender1, PLOG_LEVEL_TRACE, NULL);
     plog_id_t id2 = plog_add_appender(appender2, PLOG_LEVEL_INFO, NULL);
 
-    plog_set_level(PLOG_LEVEL_TRACE);
+    plog_set_level(id1, PLOG_LEVEL_TRACE);
+    plog_set_level(id2, PLOG_LEVEL_TRACE);
 
     printf("================== Both appenders ==================\n");
 
@@ -71,14 +72,20 @@ int main(int argc, char** argv)
 
     printf("================== Level Off ==================\n");
 
-    plog_turn_level_off();
+    plog_turn_level_off(id1);
+    plog_turn_level_off(id2);
     log_all();
 
     printf("================== Level On/Set Level (INFO) ==================\n");
 
     plog_enable_appender(id1);
-    plog_turn_level_on();
-    plog_set_level(PLOG_LEVEL_INFO);
+
+    plog_turn_level_on(id1);
+    plog_turn_level_on(id2);
+
+    plog_set_level(id1, PLOG_LEVEL_INFO);
+    plog_set_level(id2, PLOG_LEVEL_INFO);
+
     log_all();
 
     plog_remove_appender(id2);
@@ -87,26 +94,24 @@ int main(int argc, char** argv)
 
     id2 = plog_add_appender(appender2, PLOG_LEVEL_INFO, NULL);
 
-    plog_turn_timestamp_on();
+    plog_turn_timestamp_on(id1);
+    plog_turn_timestamp_on(id2);
+
     log_all();
 
     printf("================== File ==================\n");
 
-    plog_turn_file_on();
+    plog_turn_file_on(id1);
+    plog_turn_file_on(id2);
     log_all();
 
     printf("================== Func ==================\n");
 
-    plog_turn_func_on();
+    plog_turn_func_on(id1);
+    plog_turn_func_on(id2);
+
     log_all();
 
     return 0;
-}*/
-
-
-int main(int argc, char** argv)
-{
-    (void)argc;
-    (void)argv;
-    return 0;
 }
+

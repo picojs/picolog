@@ -174,48 +174,6 @@ void plog_disable_appender(plog_id_t id);
 void plog_set_level(plog_id_t id, plog_level_t level);
 
 /**
- * Writes a TRACE level message to the log. Usage is similar to printf (i.e.
- * PLOG_TRACE(format, args...))
- */
-#define plog_trace(...) \
-        plog_write(PLOG_LEVEL_TRACE, __FILE__, __LINE__, __func__, __VA_ARGS__)
-
-/**
- * Writes a DEBUG level message to the log. Usage is similar to printf (i.e.
- * PLOG_DEBUG(format, args...))
- */
-#define plog_debug(...) \
-        plog_write(PLOG_LEVEL_DEBUG, __FILE__, __LINE__, __func__, __VA_ARGS__)
-
-/**
- * Writes an INFO level message to the log. Usage is similar to printf (i.e.
- * PLOG_INFO(format, args...))
- */
-#define plog_info(...) \
-        plog_write(PLOG_LEVEL_INFO,  __FILE__, __LINE__, __func__, __VA_ARGS__)
-
-/**
- * Writes a WARN level message to the log. Usage is similar to printf (i.e.
- * PLOG_WARN(format, args...))
- */
-#define plog_warn(...) \
-        plog_write(PLOG_LEVEL_WARN,  __FILE__, __LINE__, __func__, __VA_ARGS__)
-
-/**
- * Writes a ERROR level message to the log. Usage is similar to printf (i.e.
- * PLOG_ERROR(format, args...))
- */
-#define plog_error(...) \
-        plog_write(PLOG_LEVEL_ERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
-
-/**
- * Writes a FATAL level message to the log.. Usage is similar to printf (i.e.
- * PLOG_FATAL(format, args...))
- */
-#define plog_fatal(...) \
-        plog_write(PLOG_LEVEL_FATAL, __FILE__, __LINE__, __func__, __VA_ARGS__)
-
-/**
  *  Turns color ouput on for the specified appender. NOTE: Off by default.
  *
  *  @param id The appender id
@@ -274,6 +232,49 @@ void plog_turn_func_on(plog_id_t id);
  * Turns function name reporting off.
  */
 void plog_turn_func_off(plog_id_t id);
+
+/**
+ * Writes a TRACE level message to the log. Usage is similar to printf (i.e.
+ * PLOG_TRACE(format, args...))
+ */
+#define plog_trace(...) \
+        plog_write(PLOG_LEVEL_TRACE, __FILE__, __LINE__, __func__, __VA_ARGS__)
+
+/**
+ * Writes a DEBUG level message to the log. Usage is similar to printf (i.e.
+ * PLOG_DEBUG(format, args...))
+ */
+#define plog_debug(...) \
+        plog_write(PLOG_LEVEL_DEBUG, __FILE__, __LINE__, __func__, __VA_ARGS__)
+
+/**
+ * Writes an INFO level message to the log. Usage is similar to printf (i.e.
+ * PLOG_INFO(format, args...))
+ */
+#define plog_info(...) \
+        plog_write(PLOG_LEVEL_INFO,  __FILE__, __LINE__, __func__, __VA_ARGS__)
+
+/**
+ * Writes a WARN level message to the log. Usage is similar to printf (i.e.
+ * PLOG_WARN(format, args...))
+ */
+#define plog_warn(...) \
+        plog_write(PLOG_LEVEL_WARN,  __FILE__, __LINE__, __func__, __VA_ARGS__)
+
+/**
+ * Writes a ERROR level message to the log. Usage is similar to printf (i.e.
+ * PLOG_ERROR(format, args...))
+ */
+#define plog_error(...) \
+        plog_write(PLOG_LEVEL_ERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
+
+/**
+ * Writes a FATAL level message to the log.. Usage is similar to printf (i.e.
+ * PLOG_FATAL(format, args...))
+ */
+#define plog_fatal(...) \
+        plog_write(PLOG_LEVEL_FATAL, __FILE__, __LINE__, __func__, __VA_ARGS__)
+
 
 /**
  * WARNING: It is inadvisable to call this function directly. Use the macros
