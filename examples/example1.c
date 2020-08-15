@@ -40,9 +40,9 @@ int main(int argc, char** argv)
 
     plog_id_t id = plog_add_appender(appender, PLOG_LEVEL_INFO, NULL);
 
-    plog_turn_timestamp_on(id);
-    plog_turn_file_on(id);
-    plog_turn_func_on(id);
+    plog_timestamp_on(id);
+    plog_file_on(id);
+    plog_func_on(id);
 
     // Default log level is INFO
 

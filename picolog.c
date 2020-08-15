@@ -313,7 +313,7 @@ plog_set_time_fmt (plog_id_t id, const char* fmt)
 }
 
 void
-plog_turn_colors_on (plog_id_t id)
+plog_colors_on (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -326,7 +326,7 @@ plog_turn_colors_on (plog_id_t id)
 }
 
 void
-plog_turn_colors_off (plog_id_t id)
+plog_colors_off (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -339,7 +339,7 @@ plog_turn_colors_off (plog_id_t id)
 }
 
 void
-plog_turn_timestamp_on (plog_id_t id)
+plog_timestamp_on (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -352,7 +352,7 @@ plog_turn_timestamp_on (plog_id_t id)
 }
 
 void
-plog_turn_timestamp_off (plog_id_t id)
+plog_timestamp_off (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -365,7 +365,7 @@ plog_turn_timestamp_off (plog_id_t id)
 }
 
 void
-plog_turn_level_on (plog_id_t id)
+plog_level_on (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -378,7 +378,7 @@ plog_turn_level_on (plog_id_t id)
 }
 
 void
-plog_turn_level_off (plog_id_t id)
+plog_level_off (plog_id_t id)
 {    // Initialize logger if neccesary
     try_init();
 
@@ -390,7 +390,7 @@ plog_turn_level_off (plog_id_t id)
 }
 
 void
-plog_turn_file_on (plog_id_t id)
+plog_file_on (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -403,7 +403,7 @@ plog_turn_file_on (plog_id_t id)
 }
 
 void
-plog_turn_file_off (plog_id_t id)
+plog_file_off (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -416,7 +416,7 @@ plog_turn_file_off (plog_id_t id)
 }
 
 void
-plog_turn_func_on (plog_id_t id)
+plog_func_on (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();
@@ -429,7 +429,7 @@ plog_turn_func_on (plog_id_t id)
 }
 
 void
-plog_turn_func_off (plog_id_t id)
+plog_func_off (plog_id_t id)
 {
     // Initialize logger if neccesary
     try_init();

@@ -32,13 +32,13 @@ int main(int argc, char** argv)
     (void)argv;
 
     plog_id_t id = plog_add_stream(stdout, PLOG_LEVEL_TRACE);
-    plog_turn_colors_on(id);
+    plog_colors_on(id);
 
     plog_set_level(id, PLOG_LEVEL_TRACE);
 
     plog_set_time_fmt(id, "%H:%M:%S");
-    plog_turn_timestamp_on(id);
-    plog_turn_file_on(id);
+    plog_timestamp_on(id);
+    plog_file_on(id);
 
     // Default log level is INFO
 

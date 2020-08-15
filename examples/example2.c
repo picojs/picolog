@@ -72,8 +72,8 @@ int main(int argc, char** argv)
 
     printf("================== Level Off ==================\n");
 
-    plog_turn_level_off(id1);
-    plog_turn_level_off(id2);
+    plog_level_off(id1);
+    plog_level_off(id2);
 
     log_all();
 
@@ -81,8 +81,8 @@ int main(int argc, char** argv)
 
     plog_enable_appender(id1);
 
-    plog_turn_level_on(id1);
-    plog_turn_level_on(id2);
+    plog_level_on(id1);
+    plog_level_on(id2);
 
     plog_set_level(id1, PLOG_LEVEL_INFO);
     plog_set_level(id2, PLOG_LEVEL_INFO);
@@ -95,22 +95,22 @@ int main(int argc, char** argv)
 
     id2 = plog_add_appender(appender2, PLOG_LEVEL_INFO, NULL);
 
-    plog_turn_timestamp_on(id1);
-    plog_turn_timestamp_on(id2);
+    plog_timestamp_on(id1);
+    plog_timestamp_on(id2);
 
     log_all();
 
     printf("================== File ==================\n");
 
-    plog_turn_file_on(id1);
-    plog_turn_file_on(id2);
+    plog_file_on(id1);
+    plog_file_on(id2);
 
     log_all();
 
     printf("================== Func ==================\n");
 
-    plog_turn_func_on(id1);
-    plog_turn_func_on(id2);
+    plog_func_on(id1);
+    plog_func_on(id2);
 
     log_all();
 

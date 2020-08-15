@@ -178,14 +178,14 @@ void plog_set_level(plog_id_t id, plog_level_t level);
  *
  *  @param id The appender id
  */
-void plog_turn_colors_on(plog_id_t id);
+void plog_colors_on(plog_id_t id);
 
 /**
  *  Turns colors ouput off for the specified appender.
  *
  *  @param id The appender id
  */
-void plog_turn_colors_off(plog_id_t id);
+void plog_colors_off(plog_id_t id);
 
 /**
  * Sets the log timestamp format according to:
@@ -196,42 +196,42 @@ void plog_set_time_fmt(plog_id_t id, const char* fmt);
 /**
  * Turns timestamp reporting on. NOTE: Off by default.
  */
-void plog_turn_timestamp_on(plog_id_t id);
+void plog_timestamp_on(plog_id_t id);
 
 /**
  * Turns timestamp reporting off.
  */
-void plog_turn_timestamp_off(plog_id_t id);
+void plog_timestamp_off(plog_id_t id);
 
 /**
  * Turns log level reporting on. NOTE: On by default.
  */
-void plog_turn_level_on(plog_id_t id);
+void plog_level_on(plog_id_t id);
 
 /**
  * Turns log level reporting off.
  */
-void plog_turn_level_off(plog_id_t id);
+void plog_level_off(plog_id_t id);
 
 /**
  * Turns filename/line number reporting on. NOTE: Off by default.
  */
-void plog_turn_file_on(plog_id_t id);
+void plog_file_on(plog_id_t id);
 
 /**
  * Turns filename/line number reporting off.
  */
-void plog_turn_file_off(plog_id_t id);
+void plog_file_off(plog_id_t id);
 
 /**
  * Turns function name reporting on. NOTE: Off by default.
  */
-void plog_turn_func_on(plog_id_t id);
+void plog_func_on(plog_id_t id);
 
 /**
  * Turns function name reporting off.
  */
-void plog_turn_func_off(plog_id_t id);
+void plog_func_off(plog_id_t id);
 
 /**
  * Writes a TRACE level message to the log. Usage is similar to printf (i.e.
