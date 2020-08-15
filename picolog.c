@@ -393,12 +393,10 @@ time_str (char* p_str, size_t len)
 static void
 append_timestamp (char* p_entry_str)
 {
-    char p_time_str[PLOG_TIMESTAMP_LEN];
-    char p_tmp_str[PLOG_TIMESTAMP_LEN];
+    char p_time_str[PLOG_TIMESTAMP_LEN + 1];
+    char p_tmp_str[PLOG_TIMESTAMP_LEN + 1];
 
-    snprintf(p_time_str, sizeof(p_time_str), "%s ",
-             time_str(p_tmp_str, sizeof(p_tmp_str)));
-
+    snprintf(p_time_str,PLOG_TIMESTAMP_LEN, "%s ", time_str(p_tmp_str, PLOG_TIMESTAMP_LEN));
     strncat(p_entry_str, p_time_str, PLOG_TIMESTAMP_LEN);
 }
 

@@ -28,11 +28,15 @@
 
 void appender(const char* p_msg, void* p_user_data)
 {
+    (void)p_user_data;
     printf("%s", p_msg);
 }
 
 int main(int argc, char** argv)
 {
+    (void)argc;
+    (void)argv;
+
     plog_add_appender(appender, PLOG_LEVEL_INFO, NULL);
 
     plog_turn_timestamp_on();

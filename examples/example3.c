@@ -28,6 +28,9 @@
 
 int main(int argc, char** argv)
 {
+    (void)argc;
+    (void)argv;
+
     plog_id_t id = plog_add_stream(stdout, PLOG_LEVEL_TRACE);
     plog_turn_colors_on(id);
 

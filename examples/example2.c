@@ -28,12 +28,14 @@
 
 void appender1(const char* p_msg, void* p_user_data)
 {
+    (void)p_user_data;
     printf("Appender 1: %s", p_msg);
     fflush(stdout);
 }
 
 void appender2(const char* p_msg, void* p_user_data)
 {
+    (void)p_user_data;
     printf("Appender 2: %s", p_msg);
     fflush(stdout);
 }
@@ -50,6 +52,9 @@ void log_all()
 
 int main(int argc, char** argv)
 {
+    (void)argc;
+    (void)argv;
+
     plog_id_t id1 = plog_add_appender(appender1, PLOG_LEVEL_TRACE, NULL);
     plog_id_t id2 = plog_add_appender(appender2, PLOG_LEVEL_INFO, NULL);
 
