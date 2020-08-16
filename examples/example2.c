@@ -26,21 +26,21 @@
 
 #include <stdio.h>
 
-void appender1(const char* p_msg, void* p_user_data)
+static void appender1(const char* p_msg, void* p_user_data)
 {
     (void)p_user_data;
     printf("Appender 1: %s", p_msg);
     fflush(stdout);
 }
 
-void appender2(const char* p_msg, void* p_user_data)
+static void appender2(const char* p_msg, void* p_user_data)
 {
     (void)p_user_data;
     printf("Appender 2: %s", p_msg);
     fflush(stdout);
 }
 
-void log_all()
+static void log_all()
 {
     plog_trace ("Test message: %d", 0);
     plog_debug ("Test message: %d", 1);

@@ -1,5 +1,5 @@
-CC     = gcc
-CFLAGS = -std=c99 -Wall -Wextra -pedantic -I ..
+CC     = clang
+CFLAGS = -std=c99 -Wall -Wextra -Weverything -Wpedantic -I ..
 DEPS   = ../picolog.h
 
 all: example1 example2 example3

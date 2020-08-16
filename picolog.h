@@ -97,12 +97,12 @@ bool plog_str_level(const char* str, plog_level_t* level);
 /**
  * Enables logging. NOTE: Logging is enabled by default.
  */
-void plog_enable();
+void plog_enable(void);
 
 /**
  * Disables logging.
  */
-void plog_disable();
+void plog_disable(void);
 
 /**
  * Sets the locking function.
@@ -134,8 +134,7 @@ plog_id_t plog_add_appender(plog_appender_fn p_appender,
 /**
  * Registers an output stream appender.
  *
- * @param stream The output stream to write to
- *
+ * @param p_stream The output stream to write to
  * @param level  The appender's log level
  *
  * @return       An identifier for the appender. This ID is valid until the

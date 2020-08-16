@@ -26,7 +26,7 @@
 
 #include <stdio.h>
 
-void appender(const char* p_msg, void* p_user_data)
+static void appender(const char* p_msg, void* p_user_data)
 {
     (void)p_user_data;
     printf("%s", p_msg);

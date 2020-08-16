@@ -110,6 +110,7 @@ typedef struct
     plog_appender_fn p_appender;
     void*            p_user_data;
     bool             b_enabled;
+    char             pad1[3];
     plog_level_t     level;
     char             p_time_fmt[PLOG_TIME_FMT_LEN];
     bool             b_colors;
@@ -117,6 +118,7 @@ typedef struct
     bool             b_level;
     bool             b_file;
     bool             b_func;
+    char             pad2[3];
 } appender_info_t;
 
 /*
@@ -171,13 +173,13 @@ bool plog_str_level(const char* str, plog_level_t* level)
 }
 
 void
-plog_enable ()
+plog_enable (void)
 {
     gb_enabled = true;
 }
 
 void
-plog_disable ()
+plog_disable (void)
 {
     gb_enabled = false;
 }
@@ -559,7 +561,7 @@ plog_write (plog_level_t level, const char* file, unsigned line,
     // Ensure valid log level
     PLOG_ASSERT(level < PLOG_LEVEL_COUNT);
 
-    for (int i = 0; i < PLOG_MAX_APPENDERS; i++)
+    for (plog_id_t i = 0; i < PLOG_MAX_APPENDERS; i++)
     {
         if (appender_enabled(i) &&
             gp_appenders[i].level <= level)
