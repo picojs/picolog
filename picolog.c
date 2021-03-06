@@ -58,15 +58,10 @@
 #define PLOG_TERM_CODE    0x1B
 #define PLOG_TERM_RESET   "[0m"
 #define PLOG_TERM_GRAY    "[90m"
-
-static plog_lock_fn gp_lock           =  NULL; // Calls the lock function
-                                               // (if not NULL)
-static void*        gp_lock_user_data = NULL;  // Passed to the lock function on
-                                               // plog_write
-static bool         gb_initialized    = false; // True if logger is initialized
-static bool         gb_enabled        = true;  // True if logger is enabled
-
-static size_t g_appender_count = 0;           // Number of appenders
+                                
+static bool   gb_initialized   = false; // True if logger is initialized
+static bool   gb_enabled       = true;  // True if logger is enabled
+static size_t g_appender_count = 0;         // Number of appenders
 
 /*
  * Logger level strings indexed by level ID (plog_level_t).
@@ -108,9 +103,8 @@ static const char* level_color[] =
 typedef struct
 {
     plog_appender_fn p_appender;
-    void*            p_user_data;
+    void*            p_udata;
     bool             b_enabled;
-    char             pad1[3];
     plog_level_t     level;
     char             p_time_fmt[PLOG_TIME_FMT_LEN];
     bool             b_colors;
@@ -118,7 +112,8 @@ typedef struct
     bool             b_level;
     bool             b_file;
     bool             b_func;
-    char             pad2[3];
+    plog_lock_fn     p_lock;
+    void*            p_lock_udata;
 } appender_info_t;
 
 /*
@@ -184,20 +179,10 @@ plog_disable (void)
     gb_enabled = false;
 }
 
-void plog_set_lock(plog_lock_fn p_lock, void* p_user_data)
-{
-    PLOG_ASSERT(NULL != p_lock);
-
-    try_init();
-
-    gp_lock = p_lock;
-    gp_lock_user_data = p_user_data;
-}
-
 plog_id_t
 plog_add_appender (plog_appender_fn p_appender,
-                        plog_level_t level,
-                        void* p_user_data)
+                   plog_level_t level,
+                   void* p_udata)
 {
     // Initialize logger if neccesary
     try_init();
@@ -214,16 +199,18 @@ plog_add_appender (plog_appender_fn p_appender,
         if (NULL == gp_appenders[i].p_appender)
         {
             // Store and enable appender
-            gp_appenders[i].p_appender  = p_appender;
-            gp_appenders[i].level       = level;
-            gp_appenders[i].p_user_data = p_user_data;
-            gp_appenders[i].level       = PLOG_LEVEL_INFO;
-            gp_appenders[i].b_enabled   = true;
-            gp_appenders[i].b_colors    = false;
-            gp_appenders[i].b_level     = true;
-            gp_appenders[i].b_timestamp = false;
-            gp_appenders[i].b_file      = false;
-            gp_appenders[i].b_func      = false;
+            gp_appenders[i].p_appender   = p_appender;
+            gp_appenders[i].level        = level;
+            gp_appenders[i].p_udata      = p_udata;
+            gp_appenders[i].level        = PLOG_LEVEL_INFO;
+            gp_appenders[i].b_enabled    = true;
+            gp_appenders[i].b_colors     = false;
+            gp_appenders[i].b_level      = true;
+            gp_appenders[i].b_timestamp  = false;
+            gp_appenders[i].b_file       = false;
+            gp_appenders[i].b_func       = false;
+            gp_appenders[i].p_lock       = NULL;
+            gp_appenders[i].p_lock_udata = NULL;
 
             strncpy(gp_appenders[i].p_time_fmt, PLOG_TIME_FMT, PLOG_TIME_FMT_LEN);
 
@@ -239,9 +226,9 @@ plog_add_appender (plog_appender_fn p_appender,
 }
 
 static void
-stream_appender (const char* p_entry, void* p_user_data)
+stream_appender (const char* p_entry, void* p_udata)
 {
-    FILE* stream = (FILE*)p_user_data;
+    FILE* stream = (FILE*)p_udata;
     fprintf(stream, "%s", p_entry);
     fflush(stream);
 }
@@ -295,6 +282,22 @@ plog_disable_appender (plog_id_t id)
     // Disable appender
     gp_appenders[id].b_enabled = false;
 }
+
+void plog_set_lock(plog_id_t id, plog_lock_fn p_lock, void* p_udata)
+{
+    // Ensure lock function is initialized
+    PLOG_ASSERT(NULL != p_lock);
+
+    // Ensure appender is registered
+    try_init();
+
+    // Ensure appender is registered
+    PLOG_ASSERT(appender_exists(id));
+
+    gp_appenders[id].p_lock = p_lock;
+    gp_appenders[id].p_lock_udata = p_udata;
+}
+
 
 void
 plog_set_level (plog_id_t id, plog_level_t level)
@@ -545,12 +548,6 @@ void
 plog_write (plog_level_t level, const char* file, unsigned line,
                                 const char* func, const char* p_fmt, ...)
 {
-    // Calls the lock function (if the lock function is set)
-    if (NULL != gp_lock)
-    {
-        gp_lock(true, gp_lock_user_data);
-    }
-
     // Only write entry if there are registered appenders and the logger is
     // enabled
     if (0 == g_appender_count || !gb_enabled)
@@ -606,14 +603,20 @@ plog_write (plog_level_t level, const char* file, unsigned line,
             strncat(p_entry_str, p_msg_str, PLOG_MSG_LEN);
             strcat(p_entry_str, "\n");
 
-            gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_user_data);
+            // Locks the appender
+            if (NULL != gp_appenders[i].p_lock)
+            {
+                gp_appenders[i].p_lock(true, gp_appenders[i].p_lock_udata);
+            }
+   
+            gp_appenders[i].p_appender(p_entry_str, gp_appenders[i].p_udata);
+            
+            // Unlocks the appender
+            if (NULL != gp_appenders[i].p_lock)
+            {
+                gp_appenders[i].p_lock(false, gp_appenders[i].p_lock_udata);
+            }
         }
-    }
-
-    // Calls the lock function (if the lock function is set)
-    if (NULL != gp_lock)
-    {
-        gp_lock(false, gp_lock_user_data);
     }
 }
 

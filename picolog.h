@@ -76,13 +76,13 @@ typedef enum
  * Appender function definition. An appender writes a log entry to an output
  * stream. This could be the console, a file, a network connection, etc...
  */
-typedef void (*plog_appender_fn)(const char* p_entry, void* p_user_data);
+typedef void (*plog_appender_fn)(const char* p_entry, void* p_udata);
 
 /**
  *  Lock function definition. This is called during plog_write. Adapted
     from https://github.com/rxi/log.c/blob/master/src/log.h
  */
-typedef void (*plog_lock_fn)(bool lock, void *p_user_data);
+typedef void (*plog_lock_fn)(bool lock, void *p_udata);
 
 /**
  * Identifies a registered appender.
@@ -105,22 +105,17 @@ void plog_enable(void);
 void plog_disable(void);
 
 /**
- * Sets the locking function.
- */
-void plog_set_lock(plog_lock_fn p_lock, void* p_user_data);
-
-/**
  * Registers (adds appender to logger) and enables the specified appender. An
  * appender writes a log entry to an output stream. This could be a console,
  * a file, a network connection, etc...
  *
  * @param p_appender  Pointer to the appender function to register. An appender
  *                    function has the signature,
- *                    `void appender_func(const char* p_entry, void* p_user_data)`
+ *                    `void appender_func(const char* p_entry, void* p_udata)`
  *
  * @param level       The appender's log level
  *
- * @param p_user_data A pointer supplied to the appender function when writing
+ * @param p_udata A pointer supplied to the appender function when writing
  *                    a log entry. This pointer is not modified by the logger.
  *                    If not required, pass in NULL for this parameter.
  *
@@ -129,7 +124,7 @@ void plog_set_lock(plog_lock_fn p_lock, void* p_user_data);
  */
 plog_id_t plog_add_appender(plog_appender_fn p_appender,
                             plog_level_t level,
-                            void* p_user_data);
+                            void* p_udata);
 
 /**
  * Registers an output stream appender.
@@ -163,6 +158,11 @@ void plog_enable_appender(plog_id_t id);
  * @param id The appender to disable
  */
 void plog_disable_appender(plog_id_t id);
+
+/**
+ * Sets the locking function.
+ */
+void plog_set_lock(plog_id_t id, plog_lock_fn p_lock, void* p_udata);
 
 /**
  * Sets the logging level. Only those messages of equal or higher priority
