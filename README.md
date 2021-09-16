@@ -93,7 +93,7 @@ Sets the logging level. Only those messages of equal or higher priority
 - `id`    - The appender
 
 #### plog_set_time_fmt(id, fmt)
-Sets the appender timestamp format according to: 
+Sets the appender timestamp format according to:
 https://man7.org/linux/man-pages/man3/strftime.3.html
 
 - `id`  - The appender id
@@ -114,7 +114,7 @@ Turns color ouput off for the specified appender.
 
 #### plog_timestamp_on(id)
 
-Turns timestamp reporting on. 
+Turns timestamp reporting on.
 **NOTE:** Off by default.
 
 - `id`     - The appender id
@@ -127,7 +127,7 @@ Turns timestamp reporting off for the specified appender.
 
 #### plog_level_on(id)
 
-Turns log level reporting on for the specified appender. 
+Turns log level reporting on for the specified appender.
 **NOTE:** On by default.
 
 - `id`     - The appender id
@@ -140,7 +140,7 @@ Turns log level reporting off for the specified appender.
 
 #### plog_file_on(id)
 
-Turns filename/line number reporting on for the specified appender. 
+Turns filename/line number reporting on for the specified appender.
 **NOTE:** Off by default.
 
 - `id`     - The appender id
@@ -153,7 +153,7 @@ Turns filename/line number reporting off for the specified appender.
 
 #### plog_func_on(id)
 
-Turns function name reporting on for the specified appender. 
+Turns function name reporting on for the specified appender.
 **NOTE:** Off by default.
 
 - `id`     - The appender id
